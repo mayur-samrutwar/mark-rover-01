@@ -2,27 +2,34 @@
 
 # Mark Rover 01
 
-An indoor rover project working toward autonomous exploration, navigation, and 3D reconstruction of its surroundings.
+Mark Rover 01 is a mobile robotics project for autonomous indoor navigation and 3D scene reconstruction. The objective is to navigate an indoor environment, acquire observations with estimated camera poses, and reconstruct the observed scene using 3D Gaussian splatting.
 
-The goal is to let the rover move through an area, estimate its position, plan routes, and avoid obstacles while gathering observations of the environment. Those observations will support building a 3D representation of the space, including Gaussian splatting for scene reconstruction and visualization.
+## Scope
 
-Manual Wi-Fi control is working. Autonomous navigation and 3D reconstruction are the next development stages.
+The project comprises three components:
 
-## Project structure
-
-| Folder | Purpose | Status |
+| Directory | Function | Status |
 | --- | --- | --- |
-| [`wifi-control/`](wifi-control/) | Manually drive the rover over a local Wi-Fi network using keyboard or on-screen controls. Includes the ESP32 firmware and browser controller. | Working |
-| [`auto-nav/`](auto-nav/) | Develop autonomous navigation: localization, mapping, route planning, obstacle avoidance, and motion control. | Planned |
-| [`reconstruction/`](reconstruction/) | Develop the environment-reconstruction pipeline: observation capture, camera-pose alignment, and 3D scene reconstruction, including Gaussian splatting. | Planned |
+| [`wifi-control/`](wifi-control/) | Manual control over a local Wi-Fi network; ESP32 firmware and browser interface. | Implemented and tested on the rover |
+| [`auto-nav/`](auto-nav/) | Localization, mapping, path planning, obstacle avoidance, and autonomous motion control. | Not yet implemented |
+| [`reconstruction/`](reconstruction/) | Data acquisition, camera-pose estimation, and 3D scene reconstruction using Gaussian splatting. | Not yet implemented |
 
-Navigation and reconstruction are separate development areas: navigation determines where the rover can move, while reconstruction builds a representation of what the rover observes. The eventual goal is to connect them in a shared exploration workflow.
+The navigation component will determine the rover's motion. The reconstruction component will process captured observations and camera poses to produce a 3D scene representation. Their interfaces, sensor requirements, and evaluation methods remain to be defined.
 
-## Manual Wi-Fi control
+## Current implementation
 
-1. Power the ESP32 and connect it to the same home network as the laptop.
-2. Run [`wifi-control/Start Control.command`](wifi-control/Start%20Control.command), or run `python3 wifi-control/rover_control/serve.py` from this repository.
-3. Open **http://127.0.0.1:8765/** and connect.
-4. Hold WASD, the arrow keys, or an on-screen direction to move. Release to stop. Use Space or Escape for an emergency stop.
+The rover uses an ESP32-C3 and two L298N motor drivers to control four motors. A browser interface supports manual driving over Wi-Fi. Releasing input stops the rover; a firmware watchdog stops and disarms the motor-control session if valid commands are not received within 350 ms.
 
-See the [controller setup](wifi-control/README.md) for firmware, network configuration, and operating details. Network credentials remain local and are excluded from Git.
+Autonomous navigation, perception hardware integration, and scene reconstruction have not been implemented. No autonomous-navigation or reconstruction results are reported at this stage.
+
+## Running the manual controller
+
+From the repository root:
+
+```sh
+python3 wifi-control/rover_control/serve.py
+```
+
+Open **http://127.0.0.1:8765/** on the laptop. The ESP32 and laptop must be on the same local network. Use WASD, the arrow keys, or the on-screen controls; Space or Escape stops and locks the controls.
+
+See [`wifi-control/README.md`](wifi-control/README.md) for firmware and network setup. Wi-Fi credentials are stored locally and excluded from version control.

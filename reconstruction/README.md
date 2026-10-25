@@ -1,7 +1,15 @@
-# 3D reconstruction
+# 3D scene reconstruction
 
-Planned development area for building a 3D representation of the environment observed by the rover.
+Status: not yet implemented.
 
-This folder will hold code for observation capture, data preparation, camera-pose alignment, scene reconstruction, and visualization. Gaussian splatting is one of the intended reconstruction approaches. Capture hardware and the processing pipeline will be selected during development.
+This module will develop the pipeline for reconstructing indoor scenes from rover observations, using 3D Gaussian splatting as the intended scene representation.
 
-Implementation has not started. Autonomous movement and exploration will be developed in [`../auto-nav/`](../auto-nav/).
+## Design questions
+
+- Camera selection, calibration, and data acquisition.
+- Observation timestamps and camera-pose estimation.
+- Dataset preparation and coordinate-frame alignment.
+- Reconstruction, rendering, and export.
+- Evaluation of visual quality, geometric consistency, and processing cost.
+
+The camera configuration, pose-estimation method, reconstruction implementation, and evaluation protocol have not been selected. Integration with [`../auto-nav/`](../auto-nav/) will require consistent pose, calibration, and timestamp conventions.
