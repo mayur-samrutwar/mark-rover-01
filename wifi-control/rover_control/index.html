@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light"><title>Control</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <section class="drive" aria-label="Vehicle controls">
+    <div class="keypad" aria-label="Hold-to-drive controls">
+      <button class="drive-key key-w" data-code="KeyW" aria-label="Hold W or up arrow: forward"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+      <button class="drive-key key-a" data-code="KeyA" aria-label="Hold A or left arrow: turn left"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+      <button class="drive-key key-s" data-code="KeyS" aria-label="Hold S or down arrow: reverse"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+      <button class="drive-key key-d" data-code="KeyD" aria-label="Hold D or right arrow: turn right"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+    </div>
+    <div class="strength"><div class="strength-label"><label for="speed">Drive strength</label><output id="speed-value" for="speed">50%</output></div><input id="speed" type="range" min="0" max="255" value="128" aria-label="PWM drive strength"></div>
+    <output id="motion" class="sr-only" aria-live="polite">Stopped</output>
+  </section>
+  <footer>
+    <div class="connection"><span id="connection-dot" class="dot"></span><span id="connection-state" role="status">Disconnected</span><span class="divider"></span><span class="connection-meta">Wi-Fi</span><span id="response-age" class="connection-meta latency" aria-label="Response time">—</span></div>
+    <div class="utilities"><button id="resume" class="icon-button" aria-label="Resume controls" title="Resume controls" hidden><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 9 6-9 6V6Z"/></svg></button><button id="emergency" class="icon-button stop" aria-label="Emergency stop" title="Emergency stop · Space / Escape" disabled><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button><button id="connect">Connect</button></div>
+  </footer>
+</main>
+<script type="module" src="app.mjs"></script>
+</body>
+</html>

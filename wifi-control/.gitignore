@@ -1,0 +1,4 @@
+firmware/rover_wifi_control/wifi_credentials.h
+firmware/rover_wifi_control/WebAssets.h
+__pycache__/
+*.pyc
