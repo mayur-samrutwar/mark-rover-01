@@ -9,7 +9,7 @@ const state = {
   ready: false, latched: false, connecting: false, closing: false,
   sequence: 0, lastAck: 0, lastSequence: 0, left: 0, right: 0,
   session: false, arming: false, polling: false, nextPoll: 0,
-  idleFailures: 0, reconnecting: false,
+  idleFailures: 0, reconnecting: false, captureLocked: false,
 };
 let handshakeTimer;
 const keys = () => new Set([...keyboard].map(code=>keyAliases[code] || code).concat([...pointers.values()]));
@@ -26,18 +26,19 @@ function paint() {
   const held = keys();
   document.querySelectorAll('.drive-key').forEach(button => {
     button.classList.toggle('active', state.ready && held.has(button.dataset.code));
-    button.disabled = !state.ready;
+    button.disabled = !state.ready || state.captureLocked;
   });
-  $('connect').disabled = state.connecting || state.closing;
+  $('connect').disabled = state.connecting || state.closing || state.captureLocked;
   $('connect').textContent = state.port ? 'Disconnect' : 'Connect';
   $('emergency').disabled = !state.port;
   $('resume').hidden = !state.latched || !state.port;
-  $('speed').disabled = state.latched;
+  $('resume').disabled = state.captureLocked;
+  $('speed').disabled = state.latched || state.captureLocked;
   document.body.classList.toggle('latched', state.latched);
   $('motion').textContent = state.latched ? 'Stopped / locked' : directionName(state.left, state.right);
 }
 function command() {
-  if (!state.ready || state.latched || !state.queue) return;
+  if (!state.ready || state.latched || state.captureLocked || !state.queue) return;
   const [left, right] = document.hidden || !document.hasFocus() ? [0, 0] : mixKeys(keys(), Number($('speed').value));
   // Idle is a connected network link, not an active motor lease. Release sends
   // STOP immediately. A fresh handshake is required for the next held input.
@@ -146,7 +147,7 @@ document.addEventListener('keydown', event => {
   }
   if (!DRIVE_KEYS.has(keyAliases[event.code] || event.code) || editable || event.ctrlKey || event.metaKey || event.altKey) return;
   event.preventDefault();
-  if (!state.ready || state.latched || event.repeat) return;
+  if (!state.ready || state.latched || state.captureLocked || event.repeat) return;
   keyboard.add(event.code); command(); paint();
 });
 document.addEventListener('keyup', event => {
@@ -162,7 +163,7 @@ document.addEventListener('focusin', event => {
 window.addEventListener('contextmenu', releaseAll);
 for (const button of document.querySelectorAll('.drive-key')) {
   button.addEventListener('pointerdown', event => {
-    if (!state.ready || state.latched || event.button !== 0) return;
+    if (!state.ready || state.latched || state.captureLocked || event.button !== 0) return;
     event.preventDefault(); button.setPointerCapture(event.pointerId);
     pointers.set(event.pointerId, button.dataset.code); command(); paint();
   });
@@ -214,5 +215,29 @@ setInterval(() => {
   } else $('response-age').textContent = '—';
   pollIdleLink();
 }, 100);
+// Capture never generates motion. Release held input, invalidate the motor
+// lease and keep drive input disabled until the camera transaction finishes.
+window.roverCaptureLock = async locked => {
+  if (locked) {
+    state.captureLocked = true;
+    keyboard.clear(); pointers.clear();
+    state.session = state.arming = false;
+    state.left = state.right = 0;
+    clearTimeout(handshakeTimer);
+    paint();
+    await state.port?.stop();
+    // The firmware also disarms independently if STOP cannot be delivered.
+    // Waiting past that bound avoids exposing while the last lease is live.
+    await new Promise(resolve => setTimeout(resolve, 400));
+  } else {
+    keyboard.clear(); pointers.clear();
+    state.captureLocked = false;
+    paint();
+  }
+};
+if (['127.0.0.1', 'localhost'].includes(location.hostname)) {
+  void import('./capture.mjs').then(module => module.initCapture())
+    .catch(error => console.warn('Capture interface unavailable:', error.message));
+}
 showConnection('Disconnected', 'Connect to the rover over your home Wi-Fi.');
 paint();

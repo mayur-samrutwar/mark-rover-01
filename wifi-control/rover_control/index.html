@@ -7,18 +7,42 @@
 </head>
 <body>
 <main>
-  <section class="drive" aria-label="Vehicle controls">
-    <div class="keypad" aria-label="Hold-to-drive controls">
-      <button class="drive-key key-w" data-code="KeyW" aria-label="Hold W or up arrow: forward"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
-      <button class="drive-key key-a" data-code="KeyA" aria-label="Hold A or left arrow: turn left"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
-      <button class="drive-key key-s" data-code="KeyS" aria-label="Hold S or down arrow: reverse"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
-      <button class="drive-key key-d" data-code="KeyD" aria-label="Hold D or right arrow: turn right"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
-    </div>
-    <div class="strength"><div class="strength-label"><label for="speed">Drive strength</label><output id="speed-value" for="speed">50%</output></div><input id="speed" type="range" min="0" max="255" value="128" aria-label="PWM drive strength"></div>
-    <output id="motion" class="sr-only" aria-live="polite">Stopped</output>
-  </section>
+  <div class="workspace">
+    <section id="capture-panel" class="capture-panel" aria-label="Phone camera and captured images" hidden>
+      <div class="capture-heading">
+        <div class="position-heading"><h1 id="capture-position">Position 01</h1><span id="capture-count">0 photos</span></div>
+        <div class="capture-tools"><button id="capture-new" class="text-button">New scan</button><a id="capture-export" class="text-button" href="#" hidden>Export</a></div>
+      </div>
+      <div class="camera-frame">
+        <video id="capture-video" autoplay muted playsinline aria-label="Live video from the rover phone" hidden></video>
+        <img id="capture-preview" alt="Live preview from the rover phone" hidden>
+        <div id="capture-placeholder" class="camera-placeholder"><span id="capture-placeholder-text">Waiting for phone</span><a id="capture-setup-empty" href="#" target="_blank" rel="noopener">Phone setup <span aria-hidden="true">↗</span></a></div>
+        <span id="capture-preview-label" class="preview-label" hidden>Preview</span>
+      </div>
+      <div class="capture-actions">
+        <div class="capture-details"><span id="capture-resolution">—</span><span id="capture-message" role="status" aria-live="polite">Connect the phone camera</span></div>
+        <button id="capture-photo" class="capture-button" disabled><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 6.5 9.5 4h5L16 6.5h3.5A1.5 1.5 0 0 1 21 8v10a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V8a1.5 1.5 0 0 1 1.5-1.5H8Z"/><circle cx="12" cy="12.5" r="3.5"/></svg><span id="capture-photo-label">Capture</span></button>
+      </div>
+      <div class="position-toolbar"><div id="capture-stations" class="station-tabs" aria-label="Capture positions"></div><button id="capture-finish" class="text-button" disabled>Finish position</button><button id="capture-next" class="text-button" hidden>Next position <span aria-hidden="true">→</span></button></div>
+      <div id="capture-photos" class="photo-strip" aria-label="Photos at this position"></div>
+      <p id="capture-error" class="capture-error" role="alert" hidden></p>
+    </section>
+    <section class="drive" aria-label="Vehicle controls">
+      <div class="keypad" aria-label="Hold-to-drive controls">
+        <button class="drive-key key-w" data-code="KeyW" aria-label="Hold W or up arrow: forward"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+        <button class="drive-key key-a" data-code="KeyA" aria-label="Hold A or left arrow: turn left"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+        <button class="drive-key key-s" data-code="KeyS" aria-label="Hold S or down arrow: reverse"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+        <button class="drive-key key-d" data-code="KeyD" aria-label="Hold D or right arrow: turn right"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+      </div>
+      <div class="strength"><div class="strength-label"><label for="speed">Drive strength</label><output id="speed-value" for="speed">50%</output></div><input id="speed" type="range" min="0" max="255" value="128" aria-label="PWM drive strength"></div>
+      <output id="motion" class="sr-only" aria-live="polite">Stopped</output>
+    </section>
+  </div>
   <footer>
-    <div class="connection"><span id="connection-dot" class="dot"></span><span id="connection-state" role="status">Disconnected</span><span class="divider"></span><span class="connection-meta">Wi-Fi</span><span id="response-age" class="connection-meta latency" aria-label="Response time">—</span></div>
+    <div class="connections">
+      <div class="connection"><span id="connection-dot" class="dot"></span><span id="connection-state" role="status">Disconnected</span><span class="divider"></span><span class="connection-meta">Wi-Fi</span><span id="response-age" class="connection-meta latency" aria-label="Response time">—</span></div>
+      <div id="capture-connection" class="connection phone-connection" hidden><span class="divider"></span><span id="capture-phone-dot" class="dot"></span><span id="capture-phone-state">Phone offline</span><a id="capture-phone-url" href="#" target="_blank" rel="noopener" class="phone-url">Phone page <span aria-hidden="true">↗</span></a><button id="capture-copy" class="copy-button" title="Copy phone page link" aria-label="Copy phone page link"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button><a id="capture-setup" href="#" target="_blank" rel="noopener">Setup</a></div>
+    </div>
     <div class="utilities"><button id="resume" class="icon-button" aria-label="Resume controls" title="Resume controls" hidden><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 9 6-9 6V6Z"/></svg></button><button id="emergency" class="icon-button stop" aria-label="Emergency stop" title="Emergency stop · Space / Escape" disabled><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button><button id="connect">Connect</button></div>
   </footer>
 </main>

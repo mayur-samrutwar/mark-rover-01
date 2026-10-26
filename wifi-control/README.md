@@ -1,21 +1,37 @@
-# Mark 01 · Wi-Fi control
+# Manual Wi-Fi control and phone acquisition
 
-Double-click **Start Control.command**, leave its terminal running, and open **http://127.0.0.1:8765/** on this laptop. Click Connect rover. The ESP32 is powered by your phone and joins the same home network; the motor drivers keep their existing power bank supply.
+Run **Start Control.command**, leave its terminal open and visit **http://127.0.0.1:8765/** on the laptop. The ESP32 and laptop use the same home network. The phone camera connects separately through the HTTPS address shown in the operator page.
 
-W/S or up/down arrows: forward/reverse. A/D or left/right arrows: left/right. Combine keys for arcs. Release all keys to stop. Space/Escape: stop and lock. Resume clears old input. Drive strength starts at 50%.
+## Driving
 
-The page contains only four centered arrow buttons, a drive-strength slider, and a bottom connection bar. It has no branding, diagram, heading, tagline, or helper copy. The square footer icon stops and locks; the play icon resumes after a stop. The browser translates the installed driver channel order so A/D now turn the correct way; W/S are unchanged. The diagram uses those same physical wheel coordinates. Motor rotation and speed are not measured.
+W/S or up/down arrows drive forward/reverse. A/D or left/right arrows turn left/right. Combine keys for arcs. Release input to stop. Space/Escape stops and locks the controls; Resume clears previous input. Drive strength starts at 50%.
 
-The server binds only to this laptop (127.0.0.1). It relays commands to http://192.168.1.6 over Wi-Fi and never generates movement commands itself. If the rover gets a new address, run `python3 rover_control/serve.py --rover http://NEW_IP` from this folder. Only use one controller page at a time. The ESP32 stops and disarms after 350 ms without valid commands; the browser locks if it loses acknowledgements.
+The browser translates the installed driver channel order so A/D turn the physical rover in the intended direction. Motor rotation and speed are not measured. The ESP32 stops and disarms after 350 ms without valid commands. Idle status checks are separate from the driving heartbeat; idle recovery clears held input and does not arm the motors.
+
+## Phone capture
+
+The operator page adds a live phone preview, Capture, position groups and ZIP export. Start a new scan, capture overlapping photographs while rotating manually, finish the position, then drive to another position. Each acknowledged JPEG is saved immediately; finishing a position marks the group ready. Capture stops and temporarily disables driving. It never starts a motor or a rotation.
+
+The phone service uses local HTTPS and a pairing code. Android needs a one-time installation of the laptop's public development CA certificate before its camera page can open securely. Setup instructions and the public certificate are served separately; private keys are never exposed. See [`../reconstruction/capture/README.md`](../reconstruction/capture/README.md).
+
+Images and JSON manifests are stored under the repository's ignored `reconstruction/captures/` directory. This is an RGB acquisition tool; no database, cloud upload, ARCore tracking or reconstruction engine is included.
+
+## Server
+
+The operator interface and motor relay bind only to `127.0.0.1:8765`. The separate LAN HTTPS service on `8443` exposes phone acquisition routes only; the setup service on `8766` exposes instructions and the public certificate. Phone clients cannot access the motor relay.
+
+If the ESP32 changes address, run:
+
+```sh
+python3 rover_control/serve.py --rover http://NEW_IP
+```
+
+Run `python3 rover_control/serve.py --no-capture` for the control-only interface. The firmware served directly by the ESP32 does not receive these laptop-side changes until a future firmware asset rebuild and USB upload. No firmware upload is required for this feature.
 
 ## Files
 
-- `rover_control/`: page, scripts, local Wi-Fi relay, and isolated browser tests.
-- `firmware/rover_wifi_control/`: working ESP32 firmware and freshly generated white-page assets for a future USB upload. The existing running firmware already supports this laptop controller; no upload is needed to use it.
-- `firmware/rover_wifi_control/wifi_credentials.h`: private local network configuration; excluded by .gitignore.
+- `rover_control/`: operator and phone pages, local relay, capture store, TLS setup and tests.
+- `firmware/rover_wifi_control/`: existing ESP32 firmware.
+- `firmware/rover_wifi_control/wifi_credentials.h`: private configuration excluded from Git.
 
-The older page at the ESP32's own address stays unchanged until a firmware upload. Use the localhost address above for this corrected version.
-
-Idle connection checks are separate from driving: the motor session is disarmed while idle and a fresh session starts for a newly held direction. Release sends STOP. Idle polling tolerates 2-second status delays; the driving heartbeat and ESP32 350ms stop timeout are unchanged.
-
-Idle health checks retry automatically. Three consecutive failures show Reconnecting and disable direction input; a successful status check restores the connection without arming a motor session. Held inputs are cleared, and manual emergency stops always require Resume.
+The capture receiver requires Pillow; see `rover_control/requirements-capture.txt`. Capture data and local TLS certificates are excluded from version control.

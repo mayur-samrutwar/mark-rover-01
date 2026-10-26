@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
+  <title>Camera</title>
+  <link rel="stylesheet" href="/phone.css">
+</head>
+<body>
+  <main>
+    <header>
+      <span class="connection"><span id="connection-dot" class="dot"></span><span id="connection-state" role="status">Not paired</span></span>
+      <button id="change-pairing" class="text-button" hidden>Change pairing</button>
+    </header>
+
+    <section class="camera" aria-label="Phone camera">
+      <video id="camera-video" autoplay muted playsinline aria-label="Live rear camera"></video>
+      <div id="camera-placeholder" class="placeholder">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M11 9.5 13 6h6l2 3.5h5a2 2 0 0 1 2 2V25a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V11.5a2 2 0 0 1 2-2h5Z"/><circle cx="16" cy="18" r="5.5"/></svg>
+        <span id="placeholder-label">Camera off</span>
+      </div>
+      <div id="capture-flash" class="capture-flash" aria-hidden="true"></div>
+      <div class="camera-meta"><span id="resolution">—</span><span id="camera-state">Rear camera</span></div>
+    </section>
+
+    <form id="pairing-form" class="pairing-form">
+      <label for="pairing-code">Pairing code</label>
+      <div class="pairing-inputs"><input id="pairing-code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" placeholder="000000" aria-label="Six-digit pairing code" required><button id="pair-button" class="primary-button" type="submit">Pair</button></div>
+    </form>
+
+    <div class="camera-controls"><button id="start-camera" class="primary-button" hidden>Start camera</button><button id="stop-camera" class="secondary-button" hidden>Stop camera</button></div>
+    <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+    <p id="help" class="help" hidden></p>
+
+    <footer><span id="capture-count">0 captured</span><span id="upload-state">Waiting</span></footer>
+  </main>
+  <script type="module" src="/phone.mjs"></script>
+</body>
+</html>
