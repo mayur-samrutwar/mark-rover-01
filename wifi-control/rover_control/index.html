@@ -17,7 +17,7 @@
         <video id="capture-video" autoplay muted playsinline aria-label="Live video from the rover phone" hidden></video>
         <img id="capture-preview" alt="Live preview from the rover phone" hidden>
         <div id="capture-placeholder" class="camera-placeholder"><span id="capture-placeholder-text">Waiting for phone</span><a id="capture-setup-empty" href="#" target="_blank" rel="noopener">Phone setup <span aria-hidden="true">↗</span></a></div>
-        <span id="capture-preview-label" class="preview-label" hidden>Preview</span>
+        <button type="button" id="capture-preview-label" class="preview-label" hidden>Preview</button>
       </div>
       <div class="capture-actions">
         <div class="capture-details"><span id="capture-resolution">—</span><span id="capture-message" role="status" aria-live="polite">Connect the phone camera</span></div>
@@ -43,7 +43,7 @@
       <div class="connection"><span id="connection-dot" class="dot"></span><span id="connection-state" role="status">Disconnected</span><span class="divider"></span><span class="connection-meta">Wi-Fi</span><span id="response-age" class="connection-meta latency" aria-label="Response time">—</span></div>
       <div id="capture-connection" class="connection phone-connection" hidden><span class="divider"></span><span id="capture-phone-dot" class="dot"></span><span id="capture-phone-state">Phone offline</span><a id="capture-phone-url" href="#" target="_blank" rel="noopener" class="phone-url">Phone page <span aria-hidden="true">↗</span></a><button id="capture-copy" class="copy-button" title="Copy phone page link" aria-label="Copy phone page link"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button><a id="capture-setup" href="#" target="_blank" rel="noopener">Setup</a></div>
     </div>
-    <div class="utilities"><button id="resume" class="icon-button" aria-label="Resume controls" title="Resume controls" hidden><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 9 6-9 6V6Z"/></svg></button><button id="emergency" class="icon-button stop" aria-label="Emergency stop" title="Emergency stop · Space / Escape" disabled><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button><button id="connect">Connect</button></div>
+    <div class="utilities"><a class="text-button" href="/reconstruction/">Reconstruction <span aria-hidden="true">↗</span></a><button id="resume" class="text-button resume-button" aria-label="Resume controls" title="Resume controls" hidden>Resume controls</button><button id="emergency" class="icon-button stop" aria-label="Emergency stop" title="Emergency stop · Space / Escape" disabled><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button><button id="connect">Connect</button></div>
   </footer>
 </main>
 <script type="module" src="app.mjs"></script>

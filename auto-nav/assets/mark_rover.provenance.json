@@ -1,0 +1,31 @@
+{
+  "name": "Mark Rover",
+  "designId": "94612c06b9f5a5d045b4a1b1d3e31ec867bf1db483d3a065802e13713bffa8d9",
+  "source": "Isaac Protocol's saved local Mark Rover design; copied unchanged",
+  "sourcePath": "/Users/tonystark/Desktop/isaacprotocol/simulation/robot_packages/local-designs/94612c06b9f5a5d045b4a1b1d3e31ec867bf1db483d3a065802e13713bffa8d9.json",
+  "exporter": "lib/cad/exports.js exportCadMJCF + simulation/cad/kernel.py mesh_for",
+  "parts": 53,
+  "cameras": [
+    "cam_mark_phone_rear"
+  ],
+  "drives": [
+    {
+      "name": "Front left wheel output shaft",
+      "mode": "velocity"
+    },
+    {
+      "name": "Rear left wheel output shaft",
+      "mode": "velocity"
+    },
+    {
+      "name": "Front right wheel output shaft",
+      "mode": "velocity"
+    },
+    {
+      "name": "Rear right wheel output shaft",
+      "mode": "velocity"
+    }
+  ],
+  "xmlSha256": "74a6fae9c4dc089206b387c8364afad99f6097553def59c3ebe1b58bdd711aa6",
+  "hardwareValidated": false
+}

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light"><title>Reconstruction</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<main>
+  <header class="page-header"><h1>Reconstruction</h1><a id="capture-link" href="http://127.0.0.1:8765/">Camera &amp; controls <span aria-hidden="true">↗</span></a></header>
+  <div class="workspace">
+    <aside class="sidebar" aria-label="Reconstruction jobs">
+      <form id="new-job">
+        <label class="field-label" for="scan">Scan</label>
+        <select id="scan" aria-describedby="scan-detail"><option value="">Loading scans…</option></select>
+        <p id="scan-detail" class="field-detail">&nbsp;</p>
+        <div class="method-field"><label class="field-label" for="method">Method</label><select id="method" aria-label="Reconstruction method"><option value="photogrammetry" disabled>Apple photogrammetry</option><option value="mvs" selected>COLMAP / OpenMVS</option></select></div>
+        <fieldset class="quality"><legend class="field-label">Quality</legend><div class="segmented"><label><input type="radio" name="quality" value="draft" checked><span>Draft</span></label><label><input type="radio" name="quality" value="full"><span>Full</span></label></div></fieldset>
+        <p id="quality-detail" class="field-detail">Metal when available · quick inspection</p>
+        <button id="reconstruct" class="primary" type="submit" disabled>Reconstruct <span aria-hidden="true">→</span></button>
+        <p id="create-error" class="error" role="alert" hidden></p>
+      </form>
+      <div class="runs-heading"><h2>Runs</h2><button id="refresh" class="text-button" type="button" aria-label="Refresh scans and runs">Refresh</button></div>
+      <div id="runs" class="runs"><p class="muted empty-runs">No runs yet</p></div>
+      <section id="stage-panel" class="stage-panel" aria-label="Run progress" hidden>
+        <div class="run-heading"><span id="run-label"></span><span id="run-status" class="status"></span></div>
+        <div class="progress-track"><div id="progress-bar"></div></div>
+        <ol id="stages" class="stages"></ol>
+        <div class="run-actions"><button id="cancel" class="text-button" type="button" hidden>Cancel run</button><button id="retry" class="text-button" type="button" hidden>Retry run</button><span id="run-backend" class="muted"></span></div>
+      </section>
+    </aside>
+    <section class="result" aria-label="Reconstructed scene">
+      <div class="viewer-toolbar">
+        <select id="model" aria-label="Model to display" disabled><option>No model</option></select>
+        <div class="viewer-tools"><select id="view-mode" aria-label="Surface display" disabled><option value="texture">Textured</option><option value="solid">Geometry</option><option value="wireframe">Wireframe</option></select><button id="complete" class="text-button completion-button" type="button" title="Create a separate model with conservative inferred gap fills" disabled>Fill gaps</button><button id="walk" class="walk-button" type="button" aria-pressed="false" title="Explore the 3D model with WASD and Q/E; free movement without collision" disabled>Walk</button><button id="fit" class="icon-button" title="Fit scene" aria-label="Fit scene" disabled><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4M8 8l8 8m0-8-8 8"/></svg></button><button id="measure" class="text-button" type="button" disabled>Set scale</button></div>
+      </div>
+      <div id="viewer" class="viewer"><select id="viewpoint" class="viewpoint" aria-label="Saved camera viewpoints" title="Saved camera positions inside the same 3D model" hidden><option value="overview">Overview</option></select><div id="viewer-empty" class="viewer-empty"><span id="viewer-message">No model yet</span><span id="viewer-note">Choose a scan to begin</span></div><span id="viewer-loading" class="viewer-loading" hidden>Loading model…</span><div id="viewer-hint" class="viewer-hint" hidden>Drag to orbit · scroll to zoom · right-drag to pan</div><span id="scale-badge" class="scale-badge" hidden>Scale unknown</span></div>
+      <div id="scale-panel" class="scale-panel" hidden>
+        <div><strong id="scale-instruction">Select two points on the model</strong><span id="scale-current">Use a known physical distance.</span></div>
+        <form id="scale-form"><label for="distance">Distance <span class="muted">m</span></label><input id="distance" type="number" min="0.001" max="10000" step="any" placeholder="0.00" inputmode="decimal" required><button id="save-scale" class="primary" disabled>Apply</button><button id="cancel-scale" class="text-button" type="button">Cancel</button></form>
+      </div>
+      <p id="completion-summary" class="completion-summary" hidden></p>
+      <div id="result-meta" class="result-meta"><div id="metrics" class="metrics"></div><div id="artifacts" class="artifacts"></div></div>
+      <p id="run-error" class="error run-error" role="alert" hidden></p>
+      <div id="warnings" class="warnings" hidden></div>
+      <details id="log-panel" class="log-panel" hidden><summary>Processing log <span id="log-count"></span></summary><pre id="logs" tabindex="0"></pre></details>
+    </section>
+  </div>
+  <footer><div class="engine-status"><span id="server-dot" class="dot"></span><span id="server-state" role="status">Connecting</span><span class="divider"></span><span id="colmap-status">COLMAP —</span><span id="openmvs-status">OpenMVS —</span><span id="metal-status">Metal —</span><span id="native-status">Photogrammetry —</span></div><span id="footer-detail">Local processing</span></footer>
+</main>
+<script type="module" src="app.mjs"></script>
+</body>
+</html>

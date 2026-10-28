@@ -24,7 +24,7 @@ Run the existing **Start Control.command**, or start the server explicitly:
 python3 wifi-control/rover_control/serve.py
 ```
 
-Open **http://127.0.0.1:8765/** on the laptop. The operator interface remains local to this computer. Its motor commands continue through the existing ESP32 Wi-Fi relay; the phone camera connection does not control motors.
+Open [http://rover.localhost:1355/](http://rover.localhost:1355/) on the laptop. The operator interface remains local to this computer. Its motor commands continue through the existing ESP32 Wi-Fi relay; the phone camera connection does not control motors.
 
 Phone camera access requires a secure browser context. The server prepares a local HTTPS certificate using the laptop's existing `mkcert` certificate authority. It does not install certificates or change trust settings automatically.
 

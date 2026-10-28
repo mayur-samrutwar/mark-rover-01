@@ -1,0 +1,1439 @@
+{
+  "floor_sha256": "fb3c50a91d8699a19d668b142aa77887dfd24deb422626c0dc76e85be083052f",
+  "source_rgb": "/Users/tonystark/Desktop/mark-rover-01/auto-nav/artifacts/rgb-acceptance-seed-42-v4/captures/capture_0120.png",
+  "calibration": {
+    "K": [
+      [
+        207.84609690826534,
+        0.0,
+        159.5
+      ],
+      [
+        0.0,
+        207.84609690826534,
+        119.5
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "T_base_camera": [
+      [
+        0.0,
+        -0.4226182617406995,
+        0.9063077870366499,
+        0.007710730721508102
+      ],
+      [
+        -1.0,
+        0.0,
+        0.0,
+        0.02
+      ],
+      [
+        0.0,
+        -0.9063077870366499,
+        -0.4226182617406995,
+        0.3001021137448166
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "width": 320,
+    "height": 240
+  },
+  "estimated_base_pose": {
+    "x": 3.8600461279494915,
+    "y": 1.527315267409227,
+    "yaw": 0.11336705578435578
+  },
+  "floor_valid": true,
+  "positive_hits": 21,
+  "brightness": 0.1514901965856552,
+  "intervals": [
+    {
+      "bearing_index": 0,
+      "angle_rad": -0.8265641614253753,
+      "angle_degrees": -47.358637946444084,
+      "segments_m": [],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 1,
+      "angle_rad": -0.8100328781968678,
+      "angle_degrees": -46.411465187515205,
+      "segments_m": [],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 2,
+      "angle_rad": -0.7935015949683603,
+      "angle_degrees": -45.464292428586326,
+      "segments_m": [
+        [
+          0.325,
+          0.35000000000000003
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 3,
+      "angle_rad": -0.7769703117398528,
+      "angle_degrees": -44.51711966965744,
+      "segments_m": [
+        [
+          0.325,
+          0.4
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 4,
+      "angle_rad": -0.7604390285113453,
+      "angle_degrees": -43.56994691072856,
+      "segments_m": [
+        [
+          0.30000000000000004,
+          0.45
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 5,
+      "angle_rad": -0.7439077452828378,
+      "angle_degrees": -42.62277415179968,
+      "segments_m": [
+        [
+          0.30000000000000004,
+          0.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 6,
+      "angle_rad": -0.7273764620543303,
+      "angle_degrees": -41.675601392870796,
+      "segments_m": [
+        [
+          0.30000000000000004,
+          0.5750000000000001
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 7,
+      "angle_rad": -0.7108451788258228,
+      "angle_degrees": -40.72842863394192,
+      "segments_m": [
+        [
+          0.30000000000000004,
+          0.675
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 8,
+      "angle_rad": -0.6943138955973153,
+      "angle_degrees": -39.78125587501304,
+      "segments_m": [
+        [
+          0.30000000000000004,
+          0.8
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 9,
+      "angle_rad": -0.6777826123688078,
+      "angle_degrees": -38.83408311608415,
+      "segments_m": [
+        [
+          0.275,
+          0.9750000000000001
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 10,
+      "angle_rad": -0.6612513291403003,
+      "angle_degrees": -37.88691035715527,
+      "segments_m": [
+        [
+          0.275,
+          1.2750000000000001
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 11,
+      "angle_rad": -0.6447200459117928,
+      "angle_degrees": -36.939737598226394,
+      "segments_m": [
+        [
+          0.275,
+          1.75
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 12,
+      "angle_rad": -0.6281887626832852,
+      "angle_degrees": -35.9925648392975,
+      "segments_m": [
+        [
+          0.275,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 13,
+      "angle_rad": -0.6116574794547778,
+      "angle_degrees": -35.04539208036863,
+      "segments_m": [
+        [
+          0.275,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 14,
+      "angle_rad": -0.5951261962262702,
+      "angle_degrees": -34.09821932143974,
+      "segments_m": [
+        [
+          0.275,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 15,
+      "angle_rad": -0.5785949129977628,
+      "angle_degrees": -33.151046562510864,
+      "segments_m": [
+        [
+          0.275,
+          2.325
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 16,
+      "angle_rad": -0.5620636297692552,
+      "angle_degrees": -32.20387380358198,
+      "segments_m": [
+        [
+          0.275,
+          0.35000000000000003
+        ],
+        [
+          0.525,
+          2.3000000000000003
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 17,
+      "angle_rad": -0.5455323465407478,
+      "angle_degrees": -31.256701044653102,
+      "segments_m": [
+        [
+          0.275,
+          0.35000000000000003
+        ],
+        [
+          0.55,
+          2.275
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 18,
+      "angle_rad": -0.5290010633122402,
+      "angle_degrees": -30.309528285724216,
+      "segments_m": [
+        [
+          0.25,
+          0.325
+        ],
+        [
+          0.55,
+          2.25
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 19,
+      "angle_rad": -0.5124697800837328,
+      "angle_degrees": -29.36235552679534,
+      "segments_m": [
+        [
+          0.25,
+          0.325
+        ],
+        [
+          0.5750000000000001,
+          2.225
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 20,
+      "angle_rad": -0.49593849685522523,
+      "angle_degrees": -28.415182767866455,
+      "segments_m": [
+        [
+          0.25,
+          0.30000000000000004
+        ],
+        [
+          0.5750000000000001,
+          2.2
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 21,
+      "angle_rad": -0.47940721362671773,
+      "angle_degrees": -27.468010008937576,
+      "segments_m": [
+        [
+          0.25,
+          0.30000000000000004
+        ],
+        [
+          0.6000000000000001,
+          2.25
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 22,
+      "angle_rad": -0.46287593039821023,
+      "angle_degrees": -26.520837250008693,
+      "segments_m": [
+        [
+          0.25,
+          0.30000000000000004
+        ],
+        [
+          0.6000000000000001,
+          2.225
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 23,
+      "angle_rad": -0.44634464716970274,
+      "angle_degrees": -25.57366449107981,
+      "segments_m": [
+        [
+          0.25,
+          0.30000000000000004
+        ],
+        [
+          0.6000000000000001,
+          2.225
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 24,
+      "angle_rad": -0.4298133639411952,
+      "angle_degrees": -24.626491732150928,
+      "segments_m": [
+        [
+          0.25,
+          0.275
+        ],
+        [
+          0.6000000000000001,
+          2.275
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 25,
+      "angle_rad": -0.4132820807126877,
+      "angle_degrees": -23.679318973222045,
+      "segments_m": [
+        [
+          0.25,
+          0.275
+        ],
+        [
+          0.625,
+          2.25
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 26,
+      "angle_rad": -0.3967507974841802,
+      "angle_degrees": -22.732146214293163,
+      "segments_m": [
+        [
+          0.25,
+          0.275
+        ],
+        [
+          0.625,
+          2.325
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 27,
+      "angle_rad": -0.3802195142556727,
+      "angle_degrees": -21.784973455364284,
+      "segments_m": [
+        [
+          0.25,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 28,
+      "angle_rad": -0.3636882310271652,
+      "angle_degrees": -20.8378006964354,
+      "segments_m": [
+        [
+          0.25,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 29,
+      "angle_rad": -0.3471569477986577,
+      "angle_degrees": -19.89062793750652,
+      "segments_m": [
+        [
+          0.25,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 30,
+      "angle_rad": -0.3306256645701502,
+      "angle_degrees": -18.94345517857764,
+      "segments_m": [
+        [
+          0.25,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 31,
+      "angle_rad": -0.3140943813416427,
+      "angle_degrees": -17.996282419648757,
+      "segments_m": [
+        [
+          0.25,
+          0.275
+        ],
+        [
+          0.65,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 32,
+      "angle_rad": -0.2975630981131352,
+      "angle_degrees": -17.049109660719875,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.65,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 33,
+      "angle_rad": -0.2810318148846277,
+      "angle_degrees": -16.101936901790996,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.65,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 34,
+      "angle_rad": -0.2645005316561202,
+      "angle_degrees": -15.154764142862113,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.65,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 35,
+      "angle_rad": -0.2479692484276127,
+      "angle_degrees": -14.207591383933233,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.65,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 36,
+      "angle_rad": -0.2314379651991052,
+      "angle_degrees": -13.260418625004352,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.65,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 37,
+      "angle_rad": -0.2149066819705977,
+      "angle_degrees": -12.31324586607547,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.65,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 38,
+      "angle_rad": -0.1983753987420902,
+      "angle_degrees": -11.366073107146589,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 39,
+      "angle_rad": -0.1818441155135827,
+      "angle_degrees": -10.418900348217708,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 40,
+      "angle_rad": -0.1653128322850752,
+      "angle_degrees": -9.471727589288825,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 41,
+      "angle_rad": -0.1487815490565677,
+      "angle_degrees": -8.524554830359945,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 42,
+      "angle_rad": -0.1322502658280602,
+      "angle_degrees": -7.577382071431064,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 43,
+      "angle_rad": -0.11571898259955271,
+      "angle_degrees": -6.630209312502182,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 44,
+      "angle_rad": -0.09918769937104521,
+      "angle_degrees": -5.6830365535733005,
+      "segments_m": [
+        [
+          0.225,
+          0.275
+        ],
+        [
+          0.625,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 45,
+      "angle_rad": -0.08265641614253771,
+      "angle_degrees": -4.73586379464442,
+      "segments_m": [
+        [
+          0.225,
+          0.30000000000000004
+        ],
+        [
+          0.6000000000000001,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 46,
+      "angle_rad": -0.06612513291403022,
+      "angle_degrees": -3.788691035715538,
+      "segments_m": [
+        [
+          0.225,
+          0.30000000000000004
+        ],
+        [
+          0.6000000000000001,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 47,
+      "angle_rad": -0.04959384968552272,
+      "angle_degrees": -2.841518276786657,
+      "segments_m": [
+        [
+          0.225,
+          0.30000000000000004
+        ],
+        [
+          0.6000000000000001,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 48,
+      "angle_rad": -0.03306256645701511,
+      "angle_degrees": -1.894345517857769,
+      "segments_m": [
+        [
+          0.225,
+          0.30000000000000004
+        ],
+        [
+          0.5750000000000001,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 49,
+      "angle_rad": -0.01653128322850761,
+      "angle_degrees": -0.9471727589288876,
+      "segments_m": [
+        [
+          0.225,
+          0.325
+        ],
+        [
+          0.5750000000000001,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 50,
+      "angle_rad": -1.1102230246251565e-16,
+      "angle_degrees": -6.3611093629270335e-15,
+      "segments_m": [
+        [
+          0.225,
+          0.325
+        ],
+        [
+          0.55,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 51,
+      "angle_rad": 0.016531283228507387,
+      "angle_degrees": 0.947172758928875,
+      "segments_m": [
+        [
+          0.225,
+          0.35000000000000003
+        ],
+        [
+          0.525,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 52,
+      "angle_rad": 0.033062566457014886,
+      "angle_degrees": 1.8943455178577564,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 53,
+      "angle_rad": 0.049593849685522384,
+      "angle_degrees": 2.841518276786638,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 54,
+      "angle_rad": 0.06612513291402988,
+      "angle_degrees": 3.788691035715519,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 55,
+      "angle_rad": 0.08265641614253738,
+      "angle_degrees": 4.7358637946444,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 56,
+      "angle_rad": 0.09918769937104488,
+      "angle_degrees": 5.683036553573282,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 57,
+      "angle_rad": 0.11571898259955238,
+      "angle_degrees": 6.630209312502163,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 58,
+      "angle_rad": 0.13225026582805988,
+      "angle_degrees": 7.577382071431044,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 59,
+      "angle_rad": 0.14878154905656737,
+      "angle_degrees": 8.524554830359925,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 60,
+      "angle_rad": 0.16531283228507487,
+      "angle_degrees": 9.471727589288808,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 61,
+      "angle_rad": 0.18184411551358226,
+      "angle_degrees": 10.418900348217681,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 62,
+      "angle_rad": 0.19837539874208987,
+      "angle_degrees": 11.366073107146569,
+      "segments_m": [
+        [
+          0.225,
+          2.5
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 63,
+      "angle_rad": 0.21490668197059726,
+      "angle_degrees": 12.313245866075444,
+      "segments_m": [
+        [
+          0.225,
+          2.1
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 64,
+      "angle_rad": 0.23143796519910487,
+      "angle_degrees": 13.260418625004332,
+      "segments_m": [
+        [
+          0.225,
+          2.0500000000000003
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 65,
+      "angle_rad": 0.24796924842761248,
+      "angle_degrees": 14.20759138393322,
+      "segments_m": [
+        [
+          0.225,
+          1.975
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 66,
+      "angle_rad": 0.26450053165611986,
+      "angle_degrees": 15.154764142862096,
+      "segments_m": [
+        [
+          0.225,
+          1.9500000000000002
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 67,
+      "angle_rad": 0.2810318148846275,
+      "angle_degrees": 16.10193690179098,
+      "segments_m": [
+        [
+          0.225,
+          1.85
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 68,
+      "angle_rad": 0.29756309811313486,
+      "angle_degrees": 17.049109660719857,
+      "segments_m": [
+        [
+          0.225,
+          1.8
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 69,
+      "angle_rad": 0.31409438134164247,
+      "angle_degrees": 17.996282419648747,
+      "segments_m": [
+        [
+          0.25,
+          1.75
+        ]
+      ],
+      "positive_hit_range_m": 2.3000000000000003
+    },
+    {
+      "bearing_index": 70,
+      "angle_rad": 0.33062566457014986,
+      "angle_degrees": 18.94345517857762,
+      "segments_m": [
+        [
+          0.25,
+          1.675
+        ]
+      ],
+      "positive_hit_range_m": 2.225
+    },
+    {
+      "bearing_index": 71,
+      "angle_rad": 0.34715694779865747,
+      "angle_degrees": 19.89062793750651,
+      "segments_m": [
+        [
+          0.25,
+          1.6500000000000001
+        ]
+      ],
+      "positive_hit_range_m": 2.1
+    },
+    {
+      "bearing_index": 72,
+      "angle_rad": 0.36368823102716485,
+      "angle_degrees": 20.837800696435384,
+      "segments_m": [
+        [
+          0.25,
+          1.5750000000000002
+        ]
+      ],
+      "positive_hit_range_m": 2.075
+    },
+    {
+      "bearing_index": 73,
+      "angle_rad": 0.38021951425567246,
+      "angle_degrees": 21.78497345536427,
+      "segments_m": [
+        [
+          0.25,
+          1.55
+        ]
+      ],
+      "positive_hit_range_m": 2.025
+    },
+    {
+      "bearing_index": 74,
+      "angle_rad": 0.39675079748417985,
+      "angle_degrees": 22.732146214293145,
+      "segments_m": [
+        [
+          0.25,
+          1.5250000000000001
+        ]
+      ],
+      "positive_hit_range_m": 1.925
+    },
+    {
+      "bearing_index": 75,
+      "angle_rad": 0.41328208071268746,
+      "angle_degrees": 23.679318973222035,
+      "segments_m": [
+        [
+          0.25,
+          1.4500000000000002
+        ]
+      ],
+      "positive_hit_range_m": 1.875
+    },
+    {
+      "bearing_index": 76,
+      "angle_rad": 0.42981336394119485,
+      "angle_degrees": 24.626491732150907,
+      "segments_m": [
+        [
+          0.25,
+          1.425
+        ]
+      ],
+      "positive_hit_range_m": 1.85
+    },
+    {
+      "bearing_index": 77,
+      "angle_rad": 0.44634464716970246,
+      "angle_degrees": 25.573664491079796,
+      "segments_m": [
+        [
+          0.25,
+          1.375
+        ]
+      ],
+      "positive_hit_range_m": 1.8
+    },
+    {
+      "bearing_index": 78,
+      "angle_rad": 0.46287593039820984,
+      "angle_degrees": 26.52083725000867,
+      "segments_m": [
+        [
+          0.25,
+          1.375
+        ]
+      ],
+      "positive_hit_range_m": 1.75
+    },
+    {
+      "bearing_index": 79,
+      "angle_rad": 0.47940721362671745,
+      "angle_degrees": 27.468010008937558,
+      "segments_m": [
+        [
+          0.25,
+          1.375
+        ]
+      ],
+      "positive_hit_range_m": 1.725
+    },
+    {
+      "bearing_index": 80,
+      "angle_rad": 0.49593849685522484,
+      "angle_degrees": 28.415182767866433,
+      "segments_m": [
+        [
+          0.25,
+          1.3250000000000002
+        ]
+      ],
+      "positive_hit_range_m": 1.6500000000000001
+    },
+    {
+      "bearing_index": 81,
+      "angle_rad": 0.5124697800837325,
+      "angle_degrees": 29.362355526795323,
+      "segments_m": [
+        [
+          0.25,
+          1.3
+        ]
+      ],
+      "positive_hit_range_m": 1.625
+    },
+    {
+      "bearing_index": 82,
+      "angle_rad": 0.5290010633122398,
+      "angle_degrees": 30.309528285724195,
+      "segments_m": [
+        [
+          0.25,
+          1.2750000000000001
+        ]
+      ],
+      "positive_hit_range_m": 1.6
+    },
+    {
+      "bearing_index": 83,
+      "angle_rad": 0.5455323465407474,
+      "angle_degrees": 31.256701044653084,
+      "segments_m": [
+        [
+          0.275,
+          1.25
+        ]
+      ],
+      "positive_hit_range_m": 1.5750000000000002
+    },
+    {
+      "bearing_index": 84,
+      "angle_rad": 0.5620636297692548,
+      "angle_degrees": 32.203873803581956,
+      "segments_m": [
+        [
+          0.275,
+          1.225
+        ]
+      ],
+      "positive_hit_range_m": 1.55
+    },
+    {
+      "bearing_index": 85,
+      "angle_rad": 0.5785949129977624,
+      "angle_degrees": 33.15104656251085,
+      "segments_m": [
+        [
+          0.275,
+          1.2000000000000002
+        ]
+      ],
+      "positive_hit_range_m": 1.5250000000000001
+    },
+    {
+      "bearing_index": 86,
+      "angle_rad": 0.5951261962262698,
+      "angle_degrees": 34.09821932143972,
+      "segments_m": [
+        [
+          0.275,
+          1.175
+        ]
+      ],
+      "positive_hit_range_m": 1.475
+    },
+    {
+      "bearing_index": 87,
+      "angle_rad": 0.6116574794547774,
+      "angle_degrees": 35.04539208036861,
+      "segments_m": [
+        [
+          0.275,
+          1.175
+        ]
+      ],
+      "positive_hit_range_m": 1.475
+    },
+    {
+      "bearing_index": 88,
+      "angle_rad": 0.6281887626832848,
+      "angle_degrees": 35.992564839297486,
+      "segments_m": [
+        [
+          0.275,
+          1.175
+        ]
+      ],
+      "positive_hit_range_m": 1.425
+    },
+    {
+      "bearing_index": 89,
+      "angle_rad": 0.6447200459117924,
+      "angle_degrees": 36.93973759822637,
+      "segments_m": [
+        [
+          0.275,
+          1.1500000000000001
+        ]
+      ],
+      "positive_hit_range_m": 1.4000000000000001
+    },
+    {
+      "bearing_index": 90,
+      "angle_rad": 0.6612513291402998,
+      "angle_degrees": 37.886910357155244,
+      "segments_m": [
+        [
+          0.275,
+          1.175
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 91,
+      "angle_rad": 0.6777826123688074,
+      "angle_degrees": 38.83408311608414,
+      "segments_m": [
+        [
+          0.275,
+          0.9500000000000001
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 92,
+      "angle_rad": 0.6943138955973148,
+      "angle_degrees": 39.78125587501301,
+      "segments_m": [
+        [
+          0.30000000000000004,
+          0.775
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 93,
+      "angle_rad": 0.7108451788258224,
+      "angle_degrees": 40.728428633941895,
+      "segments_m": [
+        [
+          0.30000000000000004,
+          0.65
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 94,
+      "angle_rad": 0.7273764620543298,
+      "angle_degrees": 41.675601392870774,
+      "segments_m": [
+        [
+          0.30000000000000004,
+          0.55
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 95,
+      "angle_rad": 0.7439077452828374,
+      "angle_degrees": 42.62277415179966,
+      "segments_m": [
+        [
+          0.30000000000000004,
+          0.47500000000000003
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 96,
+      "angle_rad": 0.760439028511345,
+      "angle_degrees": 43.56994691072855,
+      "segments_m": [
+        [
+          0.30000000000000004,
+          0.42500000000000004
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 97,
+      "angle_rad": 0.7769703117398524,
+      "angle_degrees": 44.517119669657426,
+      "segments_m": [
+        [
+          0.325,
+          0.375
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 98,
+      "angle_rad": 0.79350159496836,
+      "angle_degrees": 45.46429242858631,
+      "segments_m": [
+        [
+          0.325,
+          0.35000000000000003
+        ]
+      ],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 99,
+      "angle_rad": 0.8100328781968674,
+      "angle_degrees": 46.411465187515184,
+      "segments_m": [],
+      "positive_hit_range_m": null
+    },
+    {
+      "bearing_index": 100,
+      "angle_rad": 0.8265641614253748,
+      "angle_degrees": 47.35863794644406,
+      "segments_m": [],
+      "positive_hit_range_m": null
+    }
+  ],
+  "straight_stopping_probes": [
+    {
+      "speed_m_s": 0.25,
+      "radius_start_m": 0.4527396904726807,
+      "radius_end_m": 0.5233906612515798,
+      "angle_start_degrees": -2.531893373191556,
+      "angle_end_degrees": -2.189940962695164
+    },
+    {
+      "speed_m_s": 0.1875,
+      "radius_start_m": 0.4035682292371493,
+      "radius_end_m": 0.47420496981993565,
+      "angle_start_degrees": -2.840622936405866,
+      "angle_end_degrees": -2.417215469548706
+    },
+    {
+      "speed_m_s": 0.125,
+      "radius_start_m": 0.3622418080663929,
+      "radius_end_m": 0.4328622350229403,
+      "angle_start_degrees": -3.1650089915291537,
+      "angle_end_degrees": -2.6482414256896853
+    },
+    {
+      "speed_m_s": 0.0625,
+      "radius_start_m": 0.3286893264807308,
+      "radius_end_m": 0.39929216394531364,
+      "angle_start_degrees": -3.4884731380105682,
+      "angle_end_degrees": -2.8710688430998155
+    },
+    {
+      "speed_m_s": 0.035,
+      "radius_start_m": 0.3164219691984801,
+      "radius_end_m": 0.387017065951874,
+      "angle_start_degrees": -3.6238949351105085,
+      "angle_end_degrees": -2.962211079014312
+    }
+  ],
+  "interpretation": "Multiple real floor intervals exist, but strict leading probe still falls entirely in an unknown radial gap for straight travel; no gap was filled and no passing witness is claimed.",
+  "source_image_sha256": "5d7053dc83ffd1c5173efadefd01e1316bb7f61ee3a5fe743588039abf4c5d33",
+  "source_time": 408.5000000012224,
+  "fixture_image": "floor_rgb_doorway_texture_gap.png",
+  "purpose": "Actual RGB-derived interval unions; navigation test supplies an independent all-free historical map to isolate fresh corroboration."
+}

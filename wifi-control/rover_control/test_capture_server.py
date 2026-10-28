@@ -289,7 +289,7 @@ class CaptureHTTPTests(StoreFixture):
         self.resources = ExitStack()
         self.addCleanup(self.resources.close)
         self.network = self.resources.enter_context(patch.object(
-            serve, "urlopen", side_effect=AssertionError("Tests must not contact the real rover."),
+            serve, "rover_request", side_effect=AssertionError("Tests must not contact the real rover."),
         ))
         self.config = SimpleNamespace(port=0, https_port=0, setup_port=0,
                                       rover="http://must-not-contact.invalid")
@@ -505,18 +505,57 @@ class CaptureHTTPTests(StoreFixture):
         self.network.assert_not_called()
 
     def test_existing_operator_relay_works_without_camera_and_is_mocked(self):
-        class FakeResponse(io.BytesIO):
-            status = 200
         self.network.side_effect = None
-        self.network.return_value = FakeResponse(b'{"ok":true}')
+        self.network.return_value = (200, json.dumps(dict(ok=True, type='stopped', protocol='rover-wifi-v1',
+            ready=True, armed=False, seq=0, left=0, right=0)).encode())
         self.store.enabled = False
         result = self.json_request("operator", "POST", "/api/stop", b"STOP", {"X-Rover-Token": "fixture-token"})
         self.assertTrue(result["ok"])
-        outbound = self.network.call_args.args[0]
-        self.assertEqual(outbound.full_url, "http://must-not-contact.invalid/api/stop")
-        self.assertEqual(outbound.data, b"STOP")
-        self.assertEqual(outbound.get_method(), "POST")
-        self.assertEqual(self.network.call_args.kwargs["timeout"], 2)
+        origin, method, path, body, headers, timeout, unused_deadline = self.network.call_args.args
+        self.assertEqual(origin.url, "http://must-not-contact.invalid")
+        self.assertEqual(path, "/api/stop")
+        self.assertEqual(body, b"STOP")
+        self.assertEqual(method, "POST")
+        self.assertEqual(headers["X-Rover-Token"], "fixture-token")
+        self.assertGreater(timeout, 0)
+        self.assertLessEqual(timeout, .20)
+
+    def test_relay_diagnostics_are_get_only_loopback_and_cached_status_is_inert(self):
+        status = self.json_request('operator', 'GET', '/api/relay/status')
+        self.assertEqual(status['target_origin'], 'http://must-not-contact.invalid')
+        self.assertEqual(status['events'], [])
+        self.network.assert_not_called()
+        for path in ('/api/relay/status', '/api/relay/probe'):
+            self.assertEqual(self.request('phone', 'GET', path)[0], 403)
+            self.assertEqual(self.request('setup', 'GET', path)[0], 404)
+            self.assertEqual(self.request('operator', 'POST', path, b'')[0], 405)
+            self.assertEqual(self.request('operator', 'HEAD', path)[0], 405)
+            self.assertEqual(self.request('operator', 'GET', path, headers={
+                'Origin': 'http://untrusted.example'})[0], 403)
+        self.network.assert_not_called()
+
+    def test_relay_probe_makes_one_read_only_request_without_forwarding_token(self):
+        self.network.side_effect = None
+        self.network.return_value = (200, json.dumps(dict(type='info', protocol='rover-wifi-v1',
+            ready=True, armed=False, seq=0, left=0, right=0, token='private-token')).encode())
+        result = self.json_request('operator', 'GET', '/api/relay/probe',
+                                   headers={'X-Rover-Token': 'private-token'})
+        self.assertEqual(self.network.call_count, 1)
+        unused_origin, method, path, body, headers, unused_timeout, unused_deadline = self.network.call_args.args
+        self.assertEqual((method, path, body), ('GET', '/api/info', None))
+        self.assertNotIn('X-Rover-Token', headers)
+        self.assertNotIn('private-token', json.dumps(result))
+        self.assertFalse(result['board']['armed'])
+        self.json_request('operator', 'GET', '/api/relay/status')
+        self.assertEqual(self.network.call_count, 1)
+
+    def test_incomplete_control_upload_is_bounded_and_never_forwarded(self):
+        started = time.monotonic()
+        result = self.json_request('operator', 'POST', '/api/command', b'M',
+                                   {'Content-Length': '20'}, expected=408)
+        self.assertLess(time.monotonic() - started, .6)
+        self.assertEqual(result['relay_code'], 'request_body_timeout')
+        self.network.assert_not_called()
 
     def test_rtc_signaling_round_trip_and_surface_permissions(self):
         self.json_request("phone", "GET", "/capture/phone/rtc", expected=401)

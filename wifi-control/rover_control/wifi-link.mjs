@@ -1,4 +1,6 @@
 // One in-flight command and one replaceable latest command, with a session lease.
+const invertMotor = value => value === 0 ? 0 : -value;
+
 export class WiFiLink {
   constructor(onMessage, onError) {
     this.onMessage=onMessage; this.onError=onError;
@@ -17,10 +19,10 @@ export class WiFiLink {
       const message=await response.json();
       if (!response.ok) throw new Error(message.error || 'Rover stopped or control session expired. Reconnect to continue.');
       if (message.protocol!=='rover-wifi-v1') throw new Error('Incompatible Wi-Fi firmware.');
-      // The installed driver's channel names are opposite the physical sides.
-      // Keep the UI in physical left/right coordinates, including its ACKs.
+      // Installed motor polarity is reversed on both channels. Preserve the
+      // channel order so forward/reverse is corrected without reversing turns.
       if (Number.isInteger(message.left) && Number.isInteger(message.right))
-        return {...message,left:message.right,right:message.left};
+        return {...message,left:invertMotor(message.left),right:invertMotor(message.right)};
       return message;
     } finally {
       clearTimeout(timer);
@@ -59,7 +61,7 @@ export class WiFiLink {
         const epoch=this.epoch;
         try {
           const parts=line.split(' ');
-          const wireCommand=`M ${parts[1]} ${parts[3]} ${parts[2]}`;
+          const wireCommand=`M ${parts[1]} ${invertMotor(Number(parts[2]))} ${invertMotor(Number(parts[3]))}`;
           const message=await this.request('/api/command',wireCommand);
           if (epoch===this.epoch && !this.closed) this.onMessage(message);
         } catch (error) {

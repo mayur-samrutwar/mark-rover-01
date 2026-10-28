@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "platform": "macos-arm64",
+  "colmap": {
+    "version": "4.2.1",
+    "url": "https://github.com/colmap/colmap/releases/download/4.2.1/colmap-arm64-macos.zip",
+    "sha256": "1fe9d65bddd61e0598f3087641cb14c4d4d4c74529e9f58911e8a5238a140a04"
+  },
+  "sources": {
+    "openMVS": {
+      "url": "https://github.com/cdcseacave/openMVS.git",
+      "revision": "610562a4f033be2aaf4f240512c93e1038186768"
+    },
+    "halfmesh": {
+      "url": "https://github.com/cdcseacave/halfmesh.git",
+      "revision": "f218f7c1a41218cc71990bfec0b1557a2c1b60e8",
+      "tag": "v0.5.1"
+    },
+    "tinyply": {
+      "url": "https://github.com/ddiakopoulos/tinyply.git",
+      "revision": "c790160ac281145669179f766c2a2fcbb3bf2143",
+      "tag": "3.0"
+    },
+    "tinygltf": {
+      "url": "https://github.com/syoyo/tinygltf.git",
+      "revision": "26422192e2908a562b641175dde18489824e609e",
+      "tag": "v2.9.6"
+    },
+    "thread-pool": {
+      "url": "https://github.com/bshoshany/thread-pool.git",
+      "revision": "bd4533f1f70c2b975cbd5769a60d8eaaea1d2233",
+      "tag": "v5.1.0"
+    },
+    "fast_float": {
+      "url": "https://github.com/fastfloat/fast_float.git",
+      "revision": "42f254836ee416ffcf2f4e6576260003ac33d48c",
+      "tag": "v8.3.2"
+    }
+  },
+  "homebrew_dependencies": [
+    "cmake",
+    "ninja",
+    "boost",
+    "eigen",
+    "opencv@4",
+    "cgal",
+    "ceres-solver",
+    "nanoflann",
+    "libomp"
+  ]
+}

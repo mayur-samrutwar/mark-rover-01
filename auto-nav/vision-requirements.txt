@@ -1,0 +1,3 @@
+# Install only into the project-local target with setup_vision.py. The simulator
+# retains ownership of numpy/scipy/MuJoCo and its other runtime dependencies.
+opencv-python-headless==5.0.0.93

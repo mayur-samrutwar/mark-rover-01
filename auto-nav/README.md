@@ -1,6 +1,74 @@
 # Autonomous navigation
 
-Status: architecture proposal. Autonomous motion has not been implemented or tested.
+**Current v6 RGB-only clutter seeds 7, 19 and 42 passed full three-room acceptance** in IsaacProtocol's MuJoCo runtime. Default seed 7 reached terminal completion with **37.940 m** traveled in **1127.0 simulated seconds**, **zero obstacle contacts**, **100% observed reachable-floor coverage**, and all **300 requested RGB captures** saved. The [independent acceptance audit](artifacts/validation-v6/acceptance-summary.json) passed all 25 checks for each seed against the [frozen nine-source manifest](artifacts/validation-v6/source-sha256.json). The [strict RGB closed-door negative also passed](artifacts/rgb-closed-door-final-v6/acceptance-summary.json). All three runs match the frozen implementation. Physical-phone/ESP32 autonomy remains a later integration milestone.
+
+The [seed-19 v6 report](artifacts/rgb-acceptance-seed-19-v6/report.json) records **35.519 m** in **1167.2 s**, zero contacts, **98.8880% reachable-floor coverage**, **324/324 captures**, 27 surveys and 43 recent-RGB corroboration checks. Its position RMSE/max/final error was **0.14434/0.22276/0.20718 m**, larger than seed 7; final yaw error was **−0.3753°**. All three accepted runs use the same frozen sources.
+
+The [seed-42 v6 report](artifacts/rgb-acceptance-seed-42-v6/report.json) records **34.605 m** in **1098.9 s**, zero contacts, **98.2074% reachable-floor coverage**, **300/300 captures**, 25 surveys and 27 recent-RGB corroboration checks. Position RMSE/max/final error was **0.30655/0.55583/0.29152 m** and final yaw error **−3.1764°**. Global position drift reached **0.556 m**: the tracker uses local RGB registrations without global bundle adjustment. These simulation passes establish the tested calibrated flat-floor behavior, not hardware autonomy or navigation across general surfaces.
+
+The [complete validation summary](artifacts/validation-v6/validation-summary.json) links the three mission audits, camera-loss and braking trials, closed-door evidence, evaluator checks and frozen source files.
+
+## Local services
+
+The standalone navigation, playback, trial-viewing, calibration and second phone-camera servers have been removed. Navigation algorithms, offline calibration utilities, CLI simulation and saved experiment evidence remain available. The playback recorder and disconnected bench/timing tools have also been removed; existing recordings are retained as data.
+
+Use the [manual controller](http://rover.localhost:1355/) for driving and phone captures and [reconstruction](http://rover.localhost:1355/reconstruction/) for processing and viewing scenes. Pair the phone through the HTTPS camera link shown on the manual controller.
+
+## Working simulation
+
+Both modes use the existing 53-part Mark Rover, all four original wheel velocity drives and collision geometry. A generated L-shaped apartment has three furnished rooms, offset open doorways, table/chair legs, cabinets, sofas and seeded random boxes. The robot moves through wheel actuators and contact physics. For RGB navigation the whole phone cradle assembly is physically pitched 25° downward; no camera is detached from the phone or moved independently of its mount.
+
+| Mode | Inputs used to navigate | Validation status |
+| --- | --- | --- |
+| `rgb` | RGB pixels, image timestamps and fixed camera/rover calibration. Motion and floor boundaries are estimated from images. No runtime depth, true pose, IMU or encoder measurements enter perception. | Current v6 seeds 7/19/42 passed: 3/3 rooms, zero contacts, at least 98.2074% reachable-floor coverage and all requested captures. Strict closed-door negative passed. |
+| `ideal` | Exact simulated pose and perspective ray-traced depth. Camera images are acquired separately. | Three existing clutter seeds reached all rooms without obstacle contact. |
+
+Both modes feed occupancy mapping, conservative footprint inflation, frontier selection, A*, path following, capture sweeps and stop gates. RGB mapping integrates disjoint confirmed floor segments while preserving their gaps, unseen near-floor intervals and occluded space as unknown. Only the rover's existing support footprint is initialized as a prior. Room names, obstacle coordinates, true trajectory and contact measurements belong to the physics engine, independent evaluator and observer dashboard; the RGB navigator receives none of them.
+
+```sh
+# Uses the existing sibling isaacprotocol/simulation/venv runtime.
+../isaacprotocol/simulation/venv/bin/python auto-nav/setup_vision.py
+# Later, verify the installed local package without downloading:
+../isaacprotocol/simulation/venv/bin/python auto-nav/setup_vision.py --check
+auto-nav/run.sh simulate --sensing rgb --seed 7 --capture --output auto-nav/artifacts/rgb-seed-7
+auto-nav/run.sh simulate --sensing ideal --seed 7 --output auto-nav/artifacts/ideal-seed-7
+auto-nav/run.sh test -q
+```
+
+Run one full rendered physics mission at a time on this Mac.
+
+Recheck the saved evidence without launching physics:
+
+```sh
+PYTHONPATH=auto-nav/.deps:auto-nav ../isaacprotocol/simulation/venv/bin/python \
+  auto-nav/artifacts/validation-v6/verify_rgb_acceptance.py \
+  auto-nav/artifacts/rgb-acceptance-seed-7-v6 \
+  auto-nav/artifacts/rgb-acceptance-seed-19-v6 \
+  auto-nav/artifacts/rgb-acceptance-seed-42-v6 \
+  --output auto-nav/artifacts/validation-v6/rechecked-seeds-7-19-42.json
+```
+
+The verifier checks strict physical room entries and their first times, terminal completion, zero contacts, coverage consistency, RGB metadata/checksums and all nine frozen source hashes. The v6 [unit suite passed 285 tests](artifacts/pytest-final-v6.txt), and [four physical fault profiles passed](artifacts/validation-v6/physical-faults-summary.json) with the same source manifest. These are separate from the full mission result.
+
+The strict v6 closed-door trial completed accessible exploration in **691.6 s** over **21.7704 m**, with **zero contacts**, **99.7138% accessible-floor coverage** and **192 saved RGB captures**. Living room and study were entered; the closed bedroom remained unvisited. Navigation ended `complete` without failure while all-room mission success correctly stayed false. Its [11 negative-test criteria](artifacts/rgb-closed-door-final-v6/acceptance-summary.json) and [independent negative verification](artifacts/rgb-closed-door-final-v6/independent-negative-verification.json) passed with unchanged frozen sources.
+
+The historical ideal-sensing acceptance runs (seeds 7, 19 and 42) entered all three rooms, reached terminal exploration completion and recorded zero obstacle-contact events. Seed 7 saved 240 stopped RGB-D frames with intrinsics, true optical poses and checksums. A blocked-bedroom-door baseline trial left the bedroom unvisited and failed all-room acceptance. **Those results are not RGB-only results.** See [SIMULATION.md](SIMULATION.md) for the baseline evidence and [RGB_NAVIGATION.md](RGB_NAVIGATION.md) for the image-only architecture, calibration, data boundary and unresolved validation work.
+
+The current [RGB seed-7 v6 report](artifacts/rgb-acceptance-seed-7-v6/report.json) records position RMSE/max/final error **0.05136/0.09107/0.01974 m**, final yaw error **−0.3363°**, 25 surveys and 20 stopping checks using bounded recent RGB corroboration. Localization errors are evaluator measurements and never correct the controller.
+
+The historical [RGB seed-19 v4 pass](artifacts/rgb-acceptance-seed-19-v4/report.json) traveled 31.804 m, observed 96.853% reachable floor and saved 276 captures in 1003.7 simulated seconds. Its position RMSE/max/final error was 0.07765/0.16471/0.06581 m. It remains a pass for its recorded v4 hashes, alongside the current v6 seed-7, seed-19 and seed-42 results.
+
+Earlier RGB trials remain useful failure evidence: [rgb-trial7k-viewpoints](artifacts/rgb-trial7k-viewpoints/report.json) reached all rooms over 20.291 m without contact but failed with tracking reset, 87.29% coverage and maximum position error 1.757 m. [Seed-7 v1](artifacts/rgb-acceptance-seed-7-v1/report.json) improved coverage to 96.97% and RMSE/max position error to 0.133/0.226 m but stalled with `recovery_budget_exhausted`. Those two reports remain failed acceptance results.
+
+The current image pipeline uses separate masks for strong fresh corners and broader floor-patch support, validated persistent tracks, 9×9 optical-flow windows with two pyramid levels, visually estimated camera attitude and ranked keyframe revisits. RGB surveys target 0.30 rad/s and mapping uses a 5 cm grid. Translation requires historical clearance over the full stopping path and image evidence for each leading stopping direction. A bounded recent RGB observation can confirm the same probe point only when the current adjacent bearings independently show farther floor. All three accepted clutter seeds exercised these v6 changes.
+
+RGB navigation assumes a rigid calibrated camera over a flat, textured floor whose appearance can be learned from the initial image. It estimates metric scale from the known mount height. This is a restricted floor-perception model, not general monocular depth or a guarantee for floor-textured objects, glass, overhangs, ramps or drop-offs. Neither sensing mode validates physical autonomous driving.
+
+## Hardware roadmap
+
+The [real-rover adapter modules](HARDWARE.md) remain available for offline development. The separate hardware console and phone server have been removed. Physical camera, motor, timing and braking calibration remain pending.
+
+The remaining sections retain the proposed S24 Ultra/ESP32 integration plan. ARCore, IMU and optional phone depth in that plan are future hardware sensing choices; they are not inputs to the current RGB-only simulation mode.
 
 ## Objective and module boundary
 
@@ -102,7 +170,7 @@ The navigation-side capture record should contain:
 
 Pose estimates are inputs that reconstruction may later refine. Preserve raw observations and revisions. Use resumable uploads with acknowledgements and local retention until successful receipt. Keep control/telemetry traffic separate from bulk image transfers. The reconstruction module owns scene fitting and export; navigation owns the capture queue and movement decisions.
 
-## First implementation milestones
+## First hardware implementation milestones
 
 1. **Phone feasibility logger.** Record synchronized RGB, pose, tracking state, depth/confidence where available, and timestamps. No autonomous motion.
 2. **Manual mapping trial.** Drive with the existing controller while logging. Measure drift on a return path, observation age, depth coverage at robot height, turning response, and stopping distance.
@@ -110,4 +178,4 @@ Pose estimates are inputs that reconstruction may later refine. Preserve raw obs
 4. **Exploration and capture.** Add frontier selection, capture-station coverage, measured-heading sweeps, and cross-station keyframes. Demonstrate operation with reconstruction disabled.
 5. **Multi-room evaluation.** Address drift/relocalization, doorways, blocked goals, revisit control, completion reporting, and mission recovery.
 
-The first implementation target is an S24 Ultra data-logging application and a laptop receiver, followed by a manually driven mapping trial. No navigation controller, reconstruction process, or motor test is started by this proposal.
+The first hardware implementation target is an S24 Ultra data-logging application and a laptop receiver, followed by a manually driven mapping trial. The implemented simulation controller does not connect to physical motors, and this roadmap does not start a hardware motor test.

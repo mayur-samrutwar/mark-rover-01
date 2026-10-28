@@ -27,7 +27,7 @@ import serve
 
 def reject_hardware(*args, **kwargs):
     raise AssertionError('WebRTC tests must not contact the real rover')
-serve.urlopen = reject_hardware
+serve.rover_request = reject_hardware
 temporary = Path(sys.argv[2])
 config = SimpleNamespace(port=0, https_port=0, setup_port=0, rover='http://must-not-contact.invalid')
 store = CaptureStore(temporary / 'captures', pairing={'code': '123456'})
@@ -162,6 +162,23 @@ try {
   const fps = (after.frames - before.frames) * 1000 / (after.timestamp - before.timestamp);
   assert.ok(after.bytes > before.bytes && after.frames > before.frames, 'Real RTP video bytes and decoded frames must advance');
   assert.ok(fps > 15, `Animated local video should exceed 15 decoded fps; observed ${fps.toFixed(1)}`);
+  // A second viewer cannot own the single direct stream, but must receive
+  // advancing JPEG previews while the first viewer continues playing video.
+  const secondViewer = await context.newPage();
+  await secondViewer.goto(operator);
+  await until(async () => await secondViewer.locator('#capture-preview').isVisible()
+    && await secondViewer.locator('#capture-preview-label').textContent() === 'Preview',
+    'A second viewer must receive a fresh fallback preview during live video');
+  const sharedPreviewSeq = (await state()).preview.seq;
+  await until(async () => (await state()).preview.seq > sharedPreviewSeq,
+    'Fallback frames must keep advancing while another viewer owns direct video');
+  assert.ok(await live(), 'The first viewer must retain direct video');
+  await secondViewer.getByRole('button', {name: 'Switch to full-speed live video'}).click();
+  await until(async () => await secondViewer.locator('#capture-preview-label').textContent() === 'Live',
+    'A viewer must be able to explicitly take over full-speed video');
+  assert.notEqual((await rtc()).rtc.connection_id, firstGeneration);
+  await secondViewer.close();
+  await until(live, 'The first viewer must recover direct video after the second closes');
   for (const page of [phonePage, operatorPage]) {
     const configurations = await page.evaluate(() => window.__rtcPeers.map(peer => peer.getConfiguration().iceServers));
     assert.ok(configurations.length);

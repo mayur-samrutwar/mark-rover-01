@@ -8,7 +8,7 @@ const state = {
   port: null, queue: null,
   ready: false, latched: false, connecting: false, closing: false,
   sequence: 0, lastAck: 0, lastSequence: 0, left: 0, right: 0,
-  session: false, arming: false, polling: false, nextPoll: 0,
+  session: false, arming: false, polling: null, nextPoll: 0, generation: 0,
   idleFailures: 0, reconnecting: false, captureLocked: false,
 };
 let handshakeTimer;
@@ -62,6 +62,7 @@ function releaseAll() {
 }
 function emergency(reason = 'Emergency stop. Controls locked.') {
   const first = !state.latched;
+  ++state.generation; state.polling = null;
   keyboard.clear(); pointers.clear();
   state.ready = false; state.latched = true;
   state.reconnecting = false;
@@ -73,8 +74,25 @@ function emergency(reason = 'Emergency stop. Controls locked.') {
   if (first) log(reason);
   paint();
 }
+function transportFailure(reason) {
+  // Network recovery restores idle controls only. Operator emergency remains a
+  // separate latch, and neither path retains a direction or a motor lease.
+  if (!state.port || state.closing || state.latched) return;
+  const stopLease = !state.reconnecting || state.session || state.arming;
+  ++state.generation; state.polling = null;
+  keyboard.clear(); pointers.clear();
+  state.ready = false; state.reconnecting = true;
+  state.session = state.arming = false;
+  state.left = state.right = 0;
+  clearTimeout(handshakeTimer);
+  if (stopLease) void state.port.stop();
+  showConnection('Reconnecting', reason + ' Checking the rover over Wi-Fi.');
+  log(reason); paint();
+}
 function synchronize(preserveHeldInput = false) {
-  if (!preserveHeldInput) { keyboard.clear(); pointers.clear(); state.ready = false; }
+  if (!preserveHeldInput) { keyboard.clear(); pointers.clear(); }
+  const generation = ++state.generation, link = state.port;
+  state.polling = null; state.ready = false;
   state.latched = false; state.session = false; state.arming = true;
   state.reconnecting = false; state.idleFailures = 0;
   state.sequence = state.lastSequence = 0;
@@ -83,7 +101,8 @@ function synchronize(preserveHeldInput = false) {
   const connection = state.queue.send('SYNC');
   clearTimeout(handshakeTimer);
   handshakeTimer = setTimeout(() => {
-    if (state.arming && state.port) emergency('No Wi-Fi firmware response. Open the page served by the rover and reconnect.');
+    if (state.arming && state.port === link && state.generation === generation)
+      transportFailure('No Wi-Fi firmware response.');
   }, 2500);
   paint();
   return connection;
@@ -95,7 +114,9 @@ function receive(line) {
   if (message.type === 'hello') {
     clearTimeout(handshakeTimer);
     if (state.latched) { state.queue?.send('STOP'); return; }
-    if (!message.ready || !message.armed) { emergency('ESP32 PWM setup failed.'); return; }
+    if (message.ready !== true || message.armed !== true || message.left !== 0 || message.right !== 0) {
+      transportFailure('ESP32 motor control is unavailable.'); return;
+    }
     state.ready = true; state.session = true; state.arming = false; state.lastAck = performance.now();
     $('response-age').textContent = '0 ms';
     state.left = state.right = 0;
@@ -104,12 +125,12 @@ function receive(line) {
     command(); paint(); return;
   }
   if (message.type === 'timeout' || message.type === 'fault') {
-    emergency(message.type === 'timeout' ? 'ESP32 watchdog stopped the rover.' : 'ESP32 rejected a command; stopped.'); return;
+    transportFailure(message.type === 'timeout' ? 'ESP32 watchdog stopped the rover.' : 'ESP32 rejected a command; stopped.'); return;
   }
   if (message.type === 'state' && state.ready) {
     if (!Number.isInteger(message.seq) || message.seq <= state.lastSequence || message.seq > state.sequence) return;
     if (!message.armed || !message.ready || !Number.isInteger(message.left) || !Number.isInteger(message.right) || Math.abs(message.left) > 255 || Math.abs(message.right) > 255) {
-      emergency('Invalid rover state; stopped.'); return;
+      transportFailure('Invalid rover state; stopped.'); return;
     }
     state.lastAck = performance.now(); state.lastSequence = message.seq;
     state.left = message.left; state.right = message.right;
@@ -118,9 +139,12 @@ function receive(line) {
 }
 async function disconnect() {
   if (state.closing) return;
+  const link = state.port;
+  ++state.generation; state.polling = null;
   state.closing = true; releaseAll(); state.ready = false;
   state.left = state.right = 0; clearTimeout(handshakeTimer); paint();
-  await state.port?.close();
+  await link?.close();
+  if (state.port !== link) return;
   state.port = state.queue = null;
   state.session = state.arming = false;
   state.reconnecting = false; state.idleFailures = 0;
@@ -131,13 +155,15 @@ async function disconnect() {
 async function connect() {
   if (state.port) { emergency('Disconnected by operator.'); await disconnect(); return; }
   state.connecting = true;
-  const link = new WiFiLink(message => receive(JSON.stringify(message)), error => {
-    emergency('Wi-Fi link: ' + error.message);
+  const link = new WiFiLink(message => {
+    if (state.port === link && !state.closing) receive(JSON.stringify(message));
+  }, error => {
+    if (state.port === link && !state.closing) transportFailure('Wi-Fi link: ' + error.message);
   });
   state.port = state.queue = link;
   paint();
   try { await synchronize(); }
-  finally { state.connecting = false; paint(); }
+  finally { if (state.port === link && !state.closing) { state.connecting = false; paint(); } }
 }
 
 document.addEventListener('keydown', event => {
@@ -182,11 +208,14 @@ $('emergency').addEventListener('click', () => emergency());
 $('resume').addEventListener('click', () => { if (state.port && !state.closing) synchronize(); });
 function pollIdleLink() {
   if (!state.port || state.latched || state.closing || state.connecting || state.session || state.arming || state.polling || performance.now() < state.nextPoll) return;
-  const link = state.port, pollStarted = performance.now();
-  state.polling = true; state.nextPoll = pollStarted + 1000;
+  const link = state.port, pollStarted = performance.now(), generation = state.generation;
+  // A late response/finally from an older link or control attempt owns no UI state.
+  const poll = {}; state.polling = poll; state.nextPoll = pollStarted + 1000;
   void link.request('/api/info',undefined,null,2000).then(message => {
-    if (state.port !== link || state.latched || state.session || state.arming) return;
-    if (!message.ready) { emergency('Rover motor control is unavailable.'); return; }
+    if (state.port !== link || state.generation !== generation || state.latched || state.closing || state.session || state.arming) return;
+    if (message.protocol !== 'rover-wifi-v1' || message.ready !== true || message.armed !== false || message.left !== 0 || message.right !== 0) {
+      transportFailure(message.armed ? 'Rover is busy; release its other controller.' : 'Rover motor control is unavailable.'); return;
+    }
     state.lastAck = performance.now(); state.idleFailures = 0;
     $('response-age').textContent = `${Math.round(performance.now() - pollStarted)} ms`;
     if (state.reconnecting) {
@@ -196,21 +225,19 @@ function pollIdleLink() {
       showConnection('Connected','Hold a direction to drive.','online'); paint();
     }
   }).catch(() => {
-    if (state.port !== link || state.latched || state.session || state.arming) return;
+    if (state.port !== link || state.generation !== generation || state.latched || state.closing || state.session || state.arming) return;
     // One slow idle request is not a lost Wi-Fi connection. Retry independently
     // of the motor watchdog; repeated failures disable input until health returns.
     if (++state.idleFailures >= 3) {
-      keyboard.clear(); pointers.clear(); state.ready = false; state.reconnecting = true;
-      state.left = state.right = 0;
-      showConnection('Reconnecting','Checking the rover over Wi-Fi.',''); paint();
+      transportFailure('Wi-Fi health checks failed.');
     }
-  }).finally(() => { state.polling = false; });
+  }).finally(() => { if (state.polling === poll) state.polling = null; });
 }
 setInterval(() => {
   if (state.ready) {
     const age = performance.now() - state.lastAck;
     if (state.session || state.arming) $('response-age').textContent = `${Math.round(age)} ms`;
-    if (state.session && age > 500) { emergency('No rover response for 500 ms while driving. Controls locked.'); return; }
+    if (state.session && age > 500) { transportFailure('No rover response for 500 ms while driving.'); return; }
     command();
   } else $('response-age').textContent = '—';
   pollIdleLink();
@@ -235,7 +262,7 @@ window.roverCaptureLock = async locked => {
     paint();
   }
 };
-if (['127.0.0.1', 'localhost'].includes(location.hostname)) {
+if (['127.0.0.1', 'localhost', 'rover.localhost'].includes(location.hostname)) {
   void import('./capture.mjs').then(module => module.initCapture())
     .catch(error => console.warn('Capture interface unavailable:', error.message));
 }

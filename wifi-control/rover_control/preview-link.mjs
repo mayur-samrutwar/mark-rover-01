@@ -4,6 +4,7 @@ export function createPreviewLink({video, onState = () => {}}) {
   const Peer = globalThis.RTCPeerConnection;
   let stopped = false, ready = false, canStart = false, connection = null, generation = 0;
   let nextAttempt = 0, failures = 0, stepping = false;
+  let takeOverRequested = false;
   let current = {mode: 'offline', framesPerSecond: null, reason: ''};
   const controllers = new Set();
   const now = () => performance.now();
@@ -116,7 +117,9 @@ export function createPreviewLink({video, onState = () => {}}) {
       lastFrame: 0, totalFrames: null, frameCallback: null, cancelGather: null,
       framesInWindow: 0, fpsAt: created, fps: null, nextPoll: 0, nextHeartbeat: 0,
       lastVideoTime: 0,
+      takeOver: takeOverRequested,
     };
+    takeOverRequested = false;
     connection = item; publish('connecting');
     item.pc.onconnectionstatechange = () => {
       if (['failed', 'closed'].includes(item.pc.connectionState)) fail(item, 'Live video interrupted');
@@ -135,6 +138,14 @@ export function createPreviewLink({video, onState = () => {}}) {
       await gatherIce(item);
       if (!isCurrent(item)) return;
       // Use the gathered description, not createOffer's pre-candidate SDP.
+      if (item.takeOver) {
+        const {rtc} = await request();
+        if (!isCurrent(item)) return;
+        if (rtc && rtc.operator_state !== 'closed' && rtc.connection_id !== item.id) {
+          await request({action: 'status', connection_id: rtc.connection_id, state: 'closed'});
+          if (!isCurrent(item)) return;
+        }
+      }
       item.offerAttempted = true;
       await request({action: 'offer', connection_id: item.id, sdp: item.pc.localDescription.sdp});
       if (!isCurrent(item)) { notifyClosed(item); return; }
@@ -201,6 +212,12 @@ export function createPreviewLink({video, onState = () => {}}) {
 
   const timer = setInterval(() => { void step(); }, 250);
   return {
+    takeOver() {
+      if (stopped || !canStart) return;
+      takeOverRequested = true;
+      dispose(); nextAttempt = 0; failures = 0;
+      void step();
+    },
     update(phone = {}) {
       if (stopped) return;
       const visible = !!phone.connected && phone.visibility !== 'hidden';

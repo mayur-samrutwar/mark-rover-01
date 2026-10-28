@@ -17,6 +17,7 @@ export function initCapture() {
     previewState = state;
     if (snapshot?.enabled && !stopped) updatePreview();
   }});
+  $('capture-preview-label').addEventListener('click', () => previewLink.takeOver());
 
   async function request(path, body, timeout = 5000) {
     const controller = new AbortController();
@@ -129,7 +130,8 @@ export function initCapture() {
     $('capture-preview-label').textContent = live ? 'Live' : stale ? 'Preview paused' : 'Preview';
     $('capture-preview-label').title = live
       ? `Direct Wi-Fi video${previewState.framesPerSecond ? ` · ${previewState.framesPerSecond} fps` : ''}`
-      : `JPEG fallback${previewState.reason ? ` · ${previewState.reason}` : ''}`;
+      : `Click for full-speed live video${previewState.reason ? ` · ${previewState.reason}` : ''}`;
+    $('capture-preview-label').setAttribute('aria-label', live ? 'Live camera video' : 'Switch to full-speed live video');
     $('capture-placeholder-text').textContent = snapshot.phone?.connected ? 'Start the phone camera' : 'Waiting for phone';
     const url = safeURL(preview.url);
     if (!live && url && !previewLoading && preview.seq !== previewSeq && connected) {

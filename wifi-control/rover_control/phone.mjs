@@ -17,6 +17,7 @@ let connected = false;
 let commandPolling = false;
 let statusPosting = false;
 let previewPosting = false;
+let lastPreviewAttempt = -Infinity;
 let captureBusy = false;
 let wakeLock = null;
 let capturedCount = 0;
@@ -215,13 +216,18 @@ function boundedSize(width, height, maxEdge) {
 }
 
 async function preview() {
-  if (!token || !cameraReady() || previewPosting || captureBusy || ended || phoneVideo.isStreaming()) return;
+  if (!token || !cameraReady() || previewPosting || captureBusy || ended) return;
+  // A direct stream serves one viewer. Keep other open control tabs supplied
+  // with fresh fallback frames without encoding JPEGs at the full video rate.
+  const now = performance.now();
+  if (phoneVideo.isStreaming() && now - lastPreviewAttempt < 1000) return;
+  lastPreviewAttempt = now;
   previewPosting = true;
   try {
     [previewCanvas.width, previewCanvas.height] = boundedSize(video.videoWidth, video.videoHeight, 640);
     previewCanvas.getContext('2d').drawImage(video, 0, 0, previewCanvas.width, previewCanvas.height);
     const blob = await canvasBlob(previewCanvas, .64);
-    if (blob.size <= 512 * 1024 && cameraReady() && !phoneVideo.isStreaming()) {
+    if (blob.size <= 512 * 1024 && cameraReady()) {
       await request('/capture/phone/preview', {method: 'POST', body: blob, headers: {'Content-Type': 'image/jpeg'}, timeout: 3000});
     }
   } catch { /* A dropped preview is expendable; commands and original photos are separate. */ }

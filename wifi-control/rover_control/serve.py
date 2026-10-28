@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import http.client
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -12,10 +13,11 @@ import shutil
 import ssl
 import tempfile
 import threading
-from urllib.error import HTTPError, URLError
+import time
 from urllib.parse import parse_qs, urlsplit
-from urllib.request import Request, urlopen
 import zipfile
+
+from rover_relay import RoverRelay, request_rover as rover_request
 
 ROOT = Path(__file__).resolve().parent
 PROJECT = ROOT.parents[1]
@@ -29,8 +31,10 @@ PHONE_STATIC = {'/phone/': 'phone.html', '/phone/index.html': 'phone.html',
 
 def arguments():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--rover', default='http://192.168.1.6')
+    parser.add_argument('--rover', default='http://192.168.1.5')
     parser.add_argument('--port', type=int, default=8765)
+    parser.add_argument('--public-url', help='Exact local Portless origin, e.g. http://rover.localhost:1355')
+    parser.add_argument('--reconstruction-port', type=int, default=8768)
     parser.add_argument('--capture-host', help='Laptop LAN IPv4 address used by the phone')
     parser.add_argument('--https-port', type=int, default=8443)
     parser.add_argument('--setup-port', type=int, default=8766)
@@ -46,7 +50,22 @@ class CaptureHTTPServer(ThreadingHTTPServer):
     allow_reuse_address = True
 
 
+def public_origin(config):
+    value = getattr(config, 'public_url', None)
+    if not value:
+        return None
+    parsed = urlsplit(value)
+    if (parsed.scheme not in {'http', 'https'} or parsed.hostname != 'rover.localhost'
+            or parsed.username or parsed.password or parsed.path not in {'', '/'}
+            or parsed.query or parsed.fragment or not parsed.port):
+        raise ValueError('--public-url must be an exact rover.localhost HTTP(S) origin with a port')
+    return f'{parsed.scheme}://{parsed.netloc}'
+
+
 def make_handler(config, store=None, surface='operator', tls=None):
+    # Constructing this client validates the explicit target and performs no I/O.
+    relay_client = RoverRelay(config.rover, request=rover_request)
+    public = public_origin(config)
     class Handler(SimpleHTTPRequestHandler):
         protocol_version = 'HTTP/1.1'
         extensions_map = {**SimpleHTTPRequestHandler.extensions_map, '.mjs': 'text/javascript'}
@@ -83,17 +102,65 @@ def make_handler(config, store=None, surface='operator', tls=None):
             else:
                 allowed_hosts = {f'{tls["host"]}:{config.setup_port}', f'127.0.0.1:{config.setup_port}', f'localhost:{config.setup_port}'}
                 scheme = 'http'
+            allowed_origins = {f'{scheme}://{host}' for host in allowed_hosts}
+            if surface == 'operator' and public:
+                allowed_hosts.add(urlsplit(public).netloc)
+                allowed_origins.add(public)
             if self.headers.get('Host') not in allowed_hosts:
                 self.send_error(403, 'Unexpected host')
                 return False
             origin = self.headers.get('Origin')
-            if origin and origin not in {f'{scheme}://{host}' for host in allowed_hosts}:
+            if origin and origin not in allowed_origins:
                 self.send_error(403, 'Cross-origin access is not allowed')
                 return False
             if self.command == 'POST' and self.headers.get('Sec-Fetch-Site') == 'cross-site':
                 self.send_error(403, 'Cross-site writes are not allowed')
                 return False
             return True
+
+        def reconstruction(self):
+            """Mount reconstruction under this operator origin, streaming large exports."""
+            port = getattr(config, 'reconstruction_port', None)
+            if not isinstance(port, int) or not 1024 <= port <= 65535:
+                self.json_response({'error': 'Reconstruction is not configured.'}, 503)
+                return
+            if self.command not in {'GET', 'HEAD', 'POST'}:
+                self.send_error(405)
+                return
+            if self.parsed.path == '/reconstruction':
+                self.send_response(308)
+                self.send_header('Location', '/reconstruction/')
+                self.send_header('Content-Length', '0')
+                self.end_headers()
+                return
+            path = self.path.removeprefix('/reconstruction') if self.path.startswith('/reconstruction/') else self.path
+            body = self.read_body(16384) if self.command == 'POST' else None
+            headers = {}
+            if self.headers.get('Content-Type'):
+                headers['Content-Type'] = self.headers['Content-Type']
+            if self.headers.get('Origin'):
+                headers['Origin'] = f'http://127.0.0.1:{port}'
+            connection = http.client.HTTPConnection('127.0.0.1', port, timeout=180)
+            try:
+                connection.request(self.command, path, body=body, headers=headers)
+                response = connection.getresponse()
+            except (OSError, http.client.HTTPException):
+                connection.close()
+                self.json_response({'error': 'Reconstruction is restarting. Try again shortly.'}, 503)
+                return
+            try:
+                self.send_response(response.status)
+                for name in ('Content-Type', 'Content-Length', 'Content-Disposition', 'Content-Security-Policy'):
+                    if response.getheader(name) is not None:
+                        self.send_header(name, response.getheader(name))
+                if response.getheader('Content-Length') is None:
+                    self.send_header('Connection', 'close')
+                    self.close_connection = True
+                self.end_headers()
+                if self.command != 'HEAD':
+                    shutil.copyfileobj(response, self.wfile, 128 * 1024)
+            finally:
+                connection.close()
 
         def json_response(self, value, status=200):
             data = json.dumps(value, allow_nan=False).encode()
@@ -163,6 +230,7 @@ def make_handler(config, store=None, surface='operator', tls=None):
                 self.path = original
 
         def relay(self):
+            started = time.monotonic()
             path = self.parsed.path
             if surface != 'operator' or path not in ROVER_PATHS:
                 self.send_error(403 if surface != 'operator' else 404)
@@ -177,25 +245,62 @@ def make_handler(config, store=None, surface='operator', tls=None):
                     raise ValueError()
             except ValueError:
                 self.send_error(400)
+                self.close_connection = True
                 return
-            headers = {'Content-Type': 'text/plain', 'Connection': 'close'}
-            token = self.headers.get('X-Rover-Token')
-            if token:
-                headers['X-Rover-Token'] = token
-            body = self.rfile.read(length) if self.command == 'POST' else None
-            request = Request(config.rover.rstrip('/') + path, data=body, headers=headers,
-                              method='GET' if self.command == 'HEAD' else self.command)
+            method = 'GET' if self.command == 'HEAD' else self.command
+            if method == 'GET' and length:
+                self.send_error(400)
+                self.close_connection = True
+                return
+            body = None
+            previous_timeout = self.connection.gettimeout()
             try:
-                try:
-                    response = urlopen(request, timeout=2)
-                except HTTPError as error:
-                    response = error
-                with response:
-                    status, data = response.status, response.read(8192)
-            except (OSError, URLError):
-                status = 502
-                data = json.dumps({'error': 'Rover unavailable over Wi-Fi. Check power and home network.'}).encode()
+                if method == 'POST':
+                    body = bytearray()
+                    end = started + relay_client.timeout_for(path)
+                    while len(body) < length:
+                        remaining = end - time.monotonic()
+                        if remaining <= 0:
+                            raise TimeoutError()
+                        self.connection.settimeout(remaining)
+                        # One buffered/socket read per iteration keeps a
+                        # trickled upload inside the same absolute deadline.
+                        chunk = self.rfile.read1(length - len(body))
+                        if not chunk:
+                            raise EOFError()
+                        body.extend(chunk)
+                    body = bytes(body)
+            except TimeoutError:
+                status, data = relay_client.reject(method, path, 'request_body_timeout',
+                                                   status=408, started_at=started)
+                self.close_connection = True
+                self.bytes_response(data, 'application/json', status)
+                return
+            except (EOFError, OSError):
+                status, data = relay_client.reject(method, path, 'incomplete_request_body',
+                                                   status=400, started_at=started)
+                self.close_connection = True
+                self.bytes_response(data, 'application/json', status)
+                return
+            finally:
+                self.connection.settimeout(previous_timeout)
+            status, data = relay_client.relay(method, path, body, self.headers.get('X-Rover-Token'),
+                                              started_at=started)
             self.bytes_response(data, 'application/json', status)
+
+        def relay_diagnostic(self):
+            if surface != 'operator':
+                self.send_error(403)
+            elif self.command != 'GET':
+                self.send_error(405)
+            elif self.headers.get('Transfer-Encoding') or self.headers.get('Content-Length', '0') != '0':
+                self.send_error(400)
+                self.close_connection = True
+            elif self.parsed.path == '/api/relay/status':
+                self.json_response(relay_client.status())
+            else:
+                # One GET /api/info, without forwarding any incoming token.
+                self.json_response(relay_client.probe())
 
         def bootstrap(self):
             if self.parsed.path == '/capture-ca.crt':
@@ -328,6 +433,11 @@ def make_handler(config, store=None, surface='operator', tls=None):
             try:
                 if surface == 'setup':
                     self.bootstrap() if self.command in {'GET', 'HEAD'} else self.send_error(405)
+                elif surface == 'operator' and (path == '/reconstruction'
+                        or path.startswith(('/reconstruction/', '/artifacts/', '/vendor/'))):
+                    self.reconstruction()
+                elif path in {'/api/relay/status', '/api/relay/probe'}:
+                    self.relay_diagnostic()
                 elif path.startswith('/api/'):
                     self.relay()
                 elif self.command == 'POST':
@@ -368,6 +478,7 @@ def make_handler(config, store=None, surface='operator', tls=None):
 
 def main():
     config = arguments()
+    public_origin(config)
     store, tls = None, None
     camera_servers = []
     if not config.no_capture:

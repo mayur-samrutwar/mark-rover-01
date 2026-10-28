@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "source": "saved_mjcf_static_mount_and_intrinsics_only",
+  "camera_name": "cam_mark_phone_rear",
+  "width": 320,
+  "height": 240,
+  "fov_y_degrees": 60.0,
+  "K": [
+    [
+      207.84609690826534,
+      0.0,
+      159.5
+    ],
+    [
+      0.0,
+      207.84609690826534,
+      119.5
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "T_base_camera": [
+    [
+      0.0,
+      -0.4226182617406995,
+      0.9063077870366499,
+      0.007710730721508102
+    ],
+    [
+      -1.0,
+      0.0,
+      0.0,
+      0.02
+    ],
+    [
+      0.0,
+      -0.9063077870366499,
+      -0.4226182617406995,
+      0.3001021137448166
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "height_m": 0.3001021137448166,
+  "mount_pitch_degrees": 25.000000000000004,
+  "min_visible_floor_m": 0.21094254452758077,
+  "mount_design_note": "25 degree physical cradle pitch keeps near-floor pixels clear of the chassis",
+  "base_convention": "+X forward, +Y left, +Z up; initial pose is local origin",
+  "optical_convention": "OpenCV: +X right, +Y down, +Z forward",
+  "assumptions": [
+    "level planar floor",
+    "fixed rigid camera mount",
+    "authored rover root is at the nominal floor support height"
+  ]
+}

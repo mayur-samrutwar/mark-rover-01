@@ -3,3 +3,8 @@ __pycache__/
 *.pyc
 /.capture-tls/
 /reconstruction/captures/
+/reconstruction/runs/
+/.reconstruction-tools/
+/.venv-reconstruction/
+
+/.rover-runtime/

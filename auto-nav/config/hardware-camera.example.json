@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "camera_id": "REPLACE_WITH_MEASURED_PHONE_AND_REAR_LENS",
+  "source_width": null,
+  "source_height": null,
+  "width": null,
+  "height": null,
+  "K": null,
+  "distortion": null,
+  "T_base_camera": null,
+  "settings": null,
+  "verified": false,
+  "timing": {
+    "max_pipeline_age_s": null,
+    "validated": false
+  },
+  "notes": [
+    "This intentionally incomplete template cannot enable perception or motion. Never substitute simulated camera parameters.",
+    "First pair the camera in preview-only mode. Copy its exact source dimensions and exposed settings, including device_id, into this file.",
+    "Measure intrinsics K and OpenCV distortion for that exact rear lens, source resolution, zoom and browser processing mode using a physical calibration target.",
+    "K is in full source-image pixels. Select a bounded output with the exact same aspect ratio; the phone resizes the whole source without rotation, mirror or crop.",
+    "Measure rigid T_base_camera in metres: base +X forward,+Y left,+Z up with floor z=0; optical +X right,+Y down,+Z forward. Confirm mount height and downward pitch physically.",
+    "Fix the mount and prevent lens, zoom, stabilization and crop changes. A changed source, orientation, geometry or pinned setting requires a new map and perception session.",
+    "Set verified=true only after reprojection and known floor-distance checks on held-out physical images pass.",
+    "Browser requestVideoFrameCallback provides presentation metadata, not exact exposure. Independently measure a conservative maximum sensor-to-callback age under load on this exact device/settings and enter max_pipeline_age_s.",
+    "Keep timing.validated=false until that bound has been tested, including exposure, browser buffering, encoder, Wi-Fi jitter and reconnects. Unknown timing blocks real motion.",
+    "The adapter labels challenge time minus the measured pipeline bound as an acquisition-time lower bound. Read-time age includes challenge, encode, upload and host processing delays. This is never claimed as exact exposure.",
+    "Run camera, floor, watchdog, steering, braking and manual-stop checks with wheels lifted before any supervised floor trial. This file alone does not validate motor calibration."
+  ]
+}

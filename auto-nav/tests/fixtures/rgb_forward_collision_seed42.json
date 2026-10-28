@@ -1,0 +1,24 @@
+{
+  "source": "artifacts/rgb-acceptance-seed-42-v2",
+  "failure": "physical_collision",
+  "simulation_seconds": 984.9999999905316,
+  "observation_source": "Saved real RGB floor mask sampled with saved static camera calibration; no scene geometry or truth pose used to derive intervals.",
+  "configuration": {
+    "resolution_m": 0.05,
+    "robot_radius_m": 0.25,
+    "safety_margin_m": 0.08,
+    "cell_area_margin_m": 0.03535533905932738,
+    "allocated_bounds": [
+      -3.0,
+      -3.0,
+      13.0,
+      11.0
+    ],
+    "survey_clearance_m": 0.6,
+    "survey_angular_speed_rad_s": 0.3,
+    "turn_limit_rad_s": 0.8
+  },
+  "free_end_max_m": 0.6000000000000001,
+  "positive_hits": false,
+  "purpose": "Frozen historical map and current image-only free intervals. Positive hits deliberately absent: unknown wall must still veto translation."
+}

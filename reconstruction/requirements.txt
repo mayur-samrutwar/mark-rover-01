@@ -1,0 +1,4 @@
+Pillow>=10.4,<13
+numpy>=2,<3
+trimesh>=4.5,<5
+fast-simplification>=0.1.9,<1

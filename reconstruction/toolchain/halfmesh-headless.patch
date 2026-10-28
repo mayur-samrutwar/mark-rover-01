@@ -1,0 +1,7 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index cc9d540..52c5da2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -203 +203 @@ find_package(Eigen3 CONFIG REQUIRED)
+-find_package(OpenCV REQUIRED)
++find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs)

@@ -21,7 +21,11 @@ from types import SimpleNamespace
 sys.path.insert(0, sys.argv[1])
 from PIL import Image
 from capture_server import CaptureStore
+import serve
 from serve import CaptureHTTPServer, make_handler
+def reject_hardware(*args, **kwargs):
+    raise AssertionError('Capture browser tests must not contact the real rover')
+serve.rover_request = reject_hardware
 temporary = Path(sys.argv[2])
 config = SimpleNamespace(port=0, https_port=0, setup_port=0, rover='http://127.0.0.1:1')
 store = CaptureStore(temporary / 'captures', pairing={'code': '123456'})

@@ -1,0 +1,8 @@
+# Prefer the existing isaacprotocol/simulation/venv runtime. The adapter imports
+# that checkout's own simulation modules and therefore also needs its runtime.
+numpy==2.4.3
+scipy==1.18.1
+mujoco==3.5.0
+pillow
+matplotlib
+pytest
